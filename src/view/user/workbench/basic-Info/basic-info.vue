@@ -201,9 +201,6 @@ import { request } from '../../../../api'
 import { userApi } from '../../../../api/modules/user/user.js'
 import CampUpload from '../../../../component/camp-upload.vue'
 const store = useStore()
-const uploadImages = ref({
-  imag1: ''
-})
 let info = reactive({
   provider: 51,
   date_created: '2022-08-30T15:42:07Z',
@@ -226,8 +223,7 @@ let info = reactive({
   authorizer_realid: '130102197803190637',
   brand_name: '天籁知艺',
   brand_website: 'www.bj-tlzy.com',
-  introduction:
-    '       天籁知艺少儿中心创新发是一家集培训、演出、活动为一体的综合机构，历十年辛勤耕耘，不断创新发展，练就独具特色幼教品牌，赢获广泛赞誉和良好口碑。\n       天籁知艺 ®是公司注册商标。天籁知艺专注幼儿艺术素质教育，突出音乐基础, 声乐、器乐、戏剧表演、舞蹈、美术等教育培训实践， 激发孩子艺术潜能，提升艺术气质，帮助孩子养成优秀品格，全面健康成长。\n       天籁知艺活动丰富多彩，',
+  introduction: 'yyy',
   employee_number: 50,
   business_license: null,
   date_started: null,
@@ -243,7 +239,6 @@ const submit = () => {
 }
 const isUser = ref(true)
 onMounted(() => {
-  console.log('📕',store.providerId)
   request
     .post(userApi.getBasiInfo, {
       provider_id: store.providerId || 55
@@ -251,7 +246,6 @@ onMounted(() => {
     .then(res => {
       console.log('用户基础信息的数据\n', res.data)
       if (res.data.Code == 200) {
-        console.log('📕', res.data)
         isUser.value = false
         // info = reactive(res.data)
       }

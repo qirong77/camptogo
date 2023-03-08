@@ -1,0 +1,56 @@
+# This is a basic workflow to help you get started with Actions
+
+name: 自动部署
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: ['main']
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # 获取当前仓库的文件信息：Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      # 打印一些信息
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+      # Runs a set of commands using the runners shell
+      # - name: Run a multi-line script
+      #   run: |
+      #     echo Add other actions to build,
+      #     echo test, and deploy your project.
+      # - name: Setup Node.js environment
+      #   uses: actions/setup-node@v3.6.0
+      #   with:
+      #     # Set always-auth in npmrc.
+      #     # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
+      #     node-version: 18.x
+      # - name: 安装依赖
+      #   run: npm install
+      # - name: 打包文件
+      #   run: npm run build
+      - name: 拷贝文件到ESC
+        uses: easingthemes/ssh-deploy@v4.0.5
+        with:
+          # Private key part of an SSH key pair
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY}}
+          # Remote host
+          REMOTE_HOST: '47.122.40.220'
+          # Remote user
+          REMOTE_USER: 'root'
+          SOURCE: "dist/"
+          TARGET: '/'
+
+          

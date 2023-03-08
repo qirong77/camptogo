@@ -1,0 +1,1 @@
+import{_ as o,o as t,c as _,q as c}from"./index.34f58568.js";const n={};function r(e,s){return t(),_("footer",null,[c(e.$slots,"default",{},void 0,!0)])}const d=o(n,[["render",r],["__scopeId","data-v-28cfd130"]]);export{d as C};

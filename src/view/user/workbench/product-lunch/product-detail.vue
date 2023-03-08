@@ -254,7 +254,7 @@
                 >
                 <el-button @click="() => deleteDate(item)">删除日期</el-button>
               </div>
-              <div class="schdule" v-for="daily in item.detail">
+              <div class="schdule" v-for="daily in item.content">
                 <div class="schdule-box">
                   <el-time-picker
                     style="width: 20%"
@@ -456,7 +456,7 @@
               本活动工作人员数量：
               <el-input-number
                 controls-position="right"
-                v-model="form.team.team_number" />
+                v-model="form.team.team_nums" />
               <span class="desc"
                 >*请您确保团队成员均有相应从业资质，符合相关法律法规的规定</span
               >
@@ -631,7 +631,7 @@
                 value-format="YYYY-MM-DDTHH:mm"
                 style="margin: 0 10px; width: 90px" />
               <el-time-picker
-                style="width: 90px"
+                style="width: 90px;margin: 0 10px;"
                 value-format="YYYY-MM-DDTHH:mm"
                 v-model="form.briefing.end_time" />
               <el-input
@@ -885,7 +885,7 @@ let form = reactive({
   accommodations: '',
   teaching_aids: '',
   team: {
-    team_number: 0,
+    team_nums: 0,
     detail: ''
   },
   medical_care: '',
@@ -893,7 +893,7 @@ let form = reactive({
   daily_schedule: [
     {
       data: '2021-08-26T00:00:00Z',
-      detail: [
+      content: [
         {
           start_time: '2022-04-03T09:30:00Z',
           end_time: '2022-04-03T09:30:00Z',
@@ -973,7 +973,7 @@ const addDaily = arr => {
 const addDate = () => {
   form.daily_schedule.push({
     data: '',
-    detail: [
+    content: [
       {
         start_time: '',
         end_time: '',
@@ -1027,7 +1027,7 @@ onMounted(() => {
   if (!/new/.test(window.location.href)) {
     form = reactive(store.product)
     form.video_short = JSON.parse('"' + form?.video_short + '"')?.url || ''
-  } else isNewProdoct = true
+  } else isNewProdoct.value = true
 })
 </script>
 <script>
