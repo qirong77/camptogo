@@ -456,15 +456,20 @@
               本活动工作人员数量：
               <el-input-number
                 controls-position="right"
-                v-model="form.team.team_nums" />
+                v-if="!form.team"
+                v-model="form.teams.team_nums" />
+              <el-input-number
+                v-else
+                controls-position="right"
+                v-model="form.team" />
               <span class="desc"
                 >*请您确保团队成员均有相应从业资质，符合相关法律法规的规定</span
               >
             </div>
-            <div class="hardware">
+            <div class="hardware" v-if="!form.team">
               <header>团队详情</header>
               <el-input
-                v-model="form.team.detail"
+                v-model="form.teams.detail"
                 type="textarea"
                 placeholder="您可以从以下方面进行描述：
 团队配置，如课程老师、助教老师、生活老师、安全员、医护人员、摄影老师、领队、导游等；
@@ -631,7 +636,7 @@
                 value-format="YYYY-MM-DDTHH:mm"
                 style="margin: 0 10px; width: 90px" />
               <el-time-picker
-                style="width: 90px;margin: 0 10px;"
+                style="width: 90px; margin: 0 10px"
                 value-format="YYYY-MM-DDTHH:mm"
                 v-model="form.briefing.end_time" />
               <el-input
@@ -884,10 +889,11 @@ let form = reactive({
   },
   accommodations: '',
   teaching_aids: '',
-  team: {
+  teams: {
     team_nums: 0,
     detail: ''
   },
+  team: '1',
   medical_care: '',
   must_know: '',
   daily_schedule: [
