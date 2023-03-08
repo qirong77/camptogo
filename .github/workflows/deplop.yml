@@ -17,16 +17,13 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # 获取当前仓库的文件信息：Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       # 打印一些信息
-      Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
-      Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
@@ -34,8 +31,6 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.6.0
         with:
-          # Set always-auth in npmrc.
-          # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
           node-version: 18.x
       - name: 安装依赖
         run: npm install
