@@ -49,12 +49,13 @@
           <el-form-item label="活动时间：">
             <el-date-picker
               v-model="form.activity_start_time"
-              value-format="YYYY-MM-DDTHH:mm"
+              value-format="YYYY-MM-DD-HH:mm"
               type="datetime"
               placeholder="开始日期" />
             <span> - </span>
             <el-date-picker
-              value-format="YYYY-MM-DDTHH:mm"
+              type="datetime"
+              value-format="YYYY-MM-DD-HH:mm"
               v-model="form.activity_end_time"
               placeholder="结束日期" />
           </el-form-item>
@@ -63,6 +64,7 @@
             label="划线价格：
           ">
             <el-input-number
+              style="width: 100px"
               v-model="form.price_original"
               controls-position="right" />
             <span class="desc">*原价（单位：元）</span>
@@ -71,6 +73,7 @@
             label="未划线价格：
           ">
             <el-input-number
+              style="width: 100px"
               v-model="form.price_selling"
               controls-position="right" />
             <span class="desc">*原价（单位：元）</span>
@@ -119,7 +122,7 @@
             <div>
               <div>请选择认证类型</div>
               <el-select
-                v-model="form.product_certified_features"
+                v-model="form.product_certified_features[0].feature_id"
                 multiple
                 style="width: 400px">
                 <el-option
@@ -127,19 +130,13 @@
                   :value="f.value"
                   :label="f.label" />
               </el-select>
-              <!-- <div>
+              <div>
                 请上传主理人团队获得的国际奖项证书<span class="desc">
                   上传文件要清晰，四角齐全，需彩扫描件、凭证等
                 </span>
               </div>
-              <el-upload v-model:file-list="certifiedFiles" multiple>
-                <el-button>上传相关证明</el-button>
-                <template #tip>
-                  <div class="el-upload__tip">
-                    支持扩展名：.rar .zip .doc .docx .pdf .jpg...
-                  </div>
-                </template>
-              </el-upload> -->
+              <campUpload
+                :images="form.product_certified_features[0].certificate" />
             </div>
           </el-form-item>
         </template>
@@ -244,7 +241,7 @@
               v-for="(item, index) in form.daily_schedule">
               <div style="display: flex">
                 <campDataPicker
-                  v-model="item.data"
+                  v-model="item.date"
                   style="margin-right: 20px" />
                 <el-button
                   type="success"
@@ -281,7 +278,7 @@
                 </div>
                 <div
                   class="add"
-                  @click="() => addDaily(item.detail)"
+                  @click="() => addDaily(item.content)"
                   style="margin-top: 10px; cursor: pointer">
                   添加一行
                 </div>
@@ -452,16 +449,11 @@
             </div>
           </el-form-item>
           <el-form-item label="服务团队：">
-            <div>
+            <div v-if="!form.team">
               本活动工作人员数量：
               <el-input-number
                 controls-position="right"
-                v-if="!form.team"
                 v-model="form.teams.team_nums" />
-              <el-input-number
-                v-else
-                controls-position="right"
-                v-model="form.team" />
               <span class="desc"
                 >*请您确保团队成员均有相应从业资质，符合相关法律法规的规定</span
               >
@@ -469,7 +461,15 @@
             <div class="hardware" v-if="!form.team">
               <header>团队详情</header>
               <el-input
+                v-if="!form.team"
                 v-model="form.teams.detail"
+                type="textarea"
+                placeholder="您可以从以下方面进行描述：
+团队配置，如课程老师、助教老师、生活老师、安全员、医护人员、摄影老师、领队、导游等；
+人员详情，如资质、荣誉、教龄等。" />
+              <el-input
+                v-else
+                v-model="form.team"
                 type="textarea"
                 placeholder="您可以从以下方面进行描述：
 团队配置，如课程老师、助教老师、生活老师、安全员、医护人员、摄影老师、领队、导游等；
@@ -628,15 +628,17 @@
             </template>
             <div style="display: flex; margin-bottom: 20px">
               <campDataPicker
-                style="width: 120px"
+                style="width: 180px"
                 v-model="form.briefing.daily" />
 
               <el-time-picker
                 v-model="form.briefing.start_time"
+                placeholder="开始时间"
                 value-format="YYYY-MM-DDTHH:mm"
-                style="margin: 0 10px; width: 90px" />
+                style="margin: 0 10px; width: 150px" />
               <el-time-picker
-                style="width: 90px; margin: 0 10px"
+                placeholder="结束时间"
+                style="width: 150px; margin: 0 10px"
                 value-format="YYYY-MM-DDTHH:mm"
                 v-model="form.briefing.end_time" />
               <el-input
@@ -670,12 +672,12 @@
               <span>活动集合地点</span>
               <span>详细地址</span>
               <campDataPicker
-                style="width: 120px"
+                style="width: 160px"
                 v-model="form.activity_time_location.start_date" />
               <el-time-picker
                 value-format="YYYY-MM-DDTHH:mm"
                 v-model="form.activity_time_location.start_time"
-                style="width: 120px"
+                style="width: 160px"
                 placeholder="开始时间" />
               <el-cascader
                 placeholder="请选择集合地点"
@@ -691,12 +693,12 @@
               <span>活动结束地点</span>
               <span>详细地址</span>
               <campDataPicker
-                style="width: 120px"
+                style="width: 160px"
                 v-model="form.activity_time_location.end_date" />
               <el-time-picker
                 value-format="YYYY-MM-DDTHH:mm"
                 v-model="form.activity_time_location.end_time"
-                style="width: 120px"
+                style="width: 160px"
                 placeholder="开始时间" />
               <el-cascader
                 placeholder="请选择集合地点"
@@ -796,21 +798,24 @@
       </product-form>
     </main>
     <camp-footer>
+      <!-- 创建商品 -->
       <template v-if="isNewProdoct">
         <el-button type="success" @click="createProduct">提交审核</el-button>
         <el-button type="success" disabled>查看预览</el-button>
         <el-button type="success" disabled @click="">保存草稿</el-button>
       </template>
-      <template v-else="isCheck">
+      <!-- 提交审核后 -->
+      <template v-if="isCheck">
         <el-button type="success" @click="createProduct">复制商品</el-button>
         <el-button type="success" disabled>查看预览</el-button>
         <el-button type="success" disabled>提交审核</el-button>
       </template>
-      <template v-else="isOnShelves">
+      <!-- 上架后 -->
+      <template v-if="isOnShelves">
         <el-button type="success" @click="createProduct">提交修改</el-button>
-        <el-button type="success" @click="upShalves">点击上架</el-button>
+        <el-button type="success" @click="upShalve">点击上架</el-button>
         <el-button type="success" disabled>查看预览</el-button>
-        <el-button type="success">复制商品</el-button>
+        <el-button type="success" disabled="">复制商品</el-button>
       </template>
     </camp-footer>
   </div>
@@ -825,6 +830,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useStore } from '../../../../store'
 import campFooter from '../../../../component/camp-footer.vue'
 import campDataPicker from '../../../../component/camp-data-picker.vue'
+import campUpload from '../../../../component/camp-upload.vue'
 const radio1 = ref(true)
 const store = useStore()
 const areaOptions = ref(regionData)
@@ -853,7 +859,12 @@ let form = reactive({
   activity_type: [],
   teacher_student: [0, 0],
   video_short: '',
-  product_certified_features: [],
+  product_certified_features: [
+    {
+      feature_id: '',
+      certificate: ''
+    }
+  ],
   languages: [],
   liability_insurance_self_if: isLiabilitySelf,
   liability_insurance_self_details: '',
@@ -893,12 +904,12 @@ let form = reactive({
     team_nums: 0,
     detail: ''
   },
-  team: '1',
+  team: '111',
   medical_care: '',
   must_know: '',
   daily_schedule: [
     {
-      data: '2021-08-26T00:00:00Z',
+      date: '2021-08-26T00:00:00Z',
       content: [
         {
           start_time: '2022-04-03T09:30:00Z',
@@ -950,12 +961,30 @@ const onUploadSuccess = (file, key) => {
   form[key] = URL.createObjectURL(file.raw)
 }
 
-const certifiedFiles = ref([
-  {
-    name: 'element-plus-logo.svg',
-    url: 'https://element-plus.org/images/element-plus-logo.svg'
-  }
-])
+const upShalve = () => {
+  request.post(userApi.upShalve, {
+    user: {
+      id: store.providerId
+    },
+    version: '1.0.0',
+    create_reason: '商品上架',
+    work_line_id: 1400,
+    work_operation: 4400,
+    content: {
+      id: store.product?.id
+    }
+  })
+}
+
+const updateProduct = () => {
+  request.post(userApi.productSubmit, {})
+}
+const copyProcuct = () => {}
+const isNewProdoct = ref(true)
+// 审核
+const isCheck = computed(() => '5200 5300'.includes(store.product.status))
+// 上架
+const isOnShelves = computed(() => '5400'.includes(store.product.status))
 
 const addAdvantage = () => {
   form.advantage.push({
@@ -978,7 +1007,7 @@ const addDaily = arr => {
 }
 const addDate = () => {
   form.daily_schedule.push({
-    data: '',
+    date: '',
     content: [
       {
         start_time: '',
@@ -1006,29 +1035,7 @@ const createProduct = () => {
     work_operation: 4200
   })
 }
-const upShalves = () => {
-  request.post(userApi.upShalve, {
-    user: {
-      id: store.providerId
-    },
-    version: '1.0.0',
-    create_reason: '商品上架',
-    work_line_id: 1400,
-    work_operation: 4400,
-    content: {
-      id: store.product?.id
-    }
-  })
-}
-const updateProduct = () => {
-  request.post(userApi.productSubmit, {})
-}
-const copyProcuct = () => {}
-const isNewProdoct = ref(true)
-// 审核
-const isCheck = '5200 5300'.includes(store.product.status)
-// 上架
-const isOnShelves = '5400'.includes(store.product.status)
+
 onMounted(() => {
   if (!/new/.test(window.location.href)) {
     form = reactive(store.product)
@@ -1394,6 +1401,9 @@ const foodOptions = [
 </script>
 <style lang="scss">
 .product-detail {
+  .product-form {
+    width: 910px;
+  }
   padding-bottom: 80px;
   .desc {
     color: rgba(0, 0, 0, 0.45061);
@@ -1417,7 +1427,7 @@ const foodOptions = [
   .grid {
     display: grid;
     grid-template-columns: 120px 120px 160px 120px;
-    gap: 0 14px;
+    gap: 0 60px;
     .product-detail .el-tooltip__trigger {
       margin-left: 0px;
     }
