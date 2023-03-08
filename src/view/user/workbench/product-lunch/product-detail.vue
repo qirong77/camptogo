@@ -122,9 +122,7 @@
             <div>
               <div>请选择认证类型</div>
               <el-select
-                v-model="form.product_certified_features[0].feature_id"
-                multiple
-                style="width: 400px">
+                v-model="form.product_certified_features[0].feature_id">
                 <el-option
                   v-for="f in certifiedFeatures"
                   :value="f.value"
@@ -806,12 +804,12 @@
       </template>
       <!-- 提交审核后 -->
       <template v-if="isCheck">
-        <el-button type="success" @click="createProduct">复制商品</el-button>
+        <el-button type="success" disabled>复制商品</el-button>
         <el-button type="success" disabled>查看预览</el-button>
         <el-button type="success" disabled>提交审核</el-button>
       </template>
-      <!-- 上架后 -->
-      <template v-if="isOnShelves">
+      <!-- 审核通过后 -->
+      <template v-if="isChecked">
         <el-button type="success" @click="createProduct">提交修改</el-button>
         <el-button type="success" @click="upShalve">点击上架</el-button>
         <el-button type="success" disabled>查看预览</el-button>
@@ -831,8 +829,11 @@ import { useStore } from '../../../../store'
 import campFooter from '../../../../component/camp-footer.vue'
 import campDataPicker from '../../../../component/camp-data-picker.vue'
 import campUpload from '../../../../component/camp-upload.vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 const radio1 = ref(true)
 const store = useStore()
+const router = useRouter()
 const areaOptions = ref(regionData)
 const isLiabilitySelf = computed(
   () => form.liability_insurance_self_details === insurenceOptions[0].value
@@ -962,29 +963,41 @@ const onUploadSuccess = (file, key) => {
 }
 
 const upShalve = () => {
-  request.post(userApi.upShalve, {
-    user: {
-      id: store.providerId
-    },
-    version: '1.0.0',
-    create_reason: '商品上架',
-    work_line_id: 1400,
-    work_operation: 4400,
-    content: {
-      id: store.product?.id
-    }
-  })
+  request
+    .post(userApi.upShalve, {
+      user: {
+        id: store.providerId
+      },
+      version: '1.0.0',
+      create_reason: '商品上架',
+      work_line_id: 1400,
+      // 复制产品好像是4200
+      work_operation: 4400,
+      content: {
+        id: store.product?.id
+      }
+    })
+    .then(r => {
+      if (r.data.Code == '200') {
+        ElMessage({
+          type: 'success',
+          message: r.data.msg || '提交成功'
+        })
+        router.push('/workbench/productLunch')
+      }
+    })
 }
 
 const updateProduct = () => {
   request.post(userApi.productSubmit, {})
 }
 const copyProcuct = () => {}
+// 新创建的
 const isNewProdoct = ref(true)
-// 审核
-const isCheck = computed(() => '5200 5300'.includes(store.product.status))
-// 上架
-const isOnShelves = computed(() => '5400'.includes(store.product.status))
+// 提交审核后
+const isCheck = computed(() => '5200 5310'.includes(store.product.status))
+// 审核通过后
+const isChecked = computed(() => '5900 5300'.includes(store.product.status))
 
 const addAdvantage = () => {
   form.advantage.push({
@@ -1026,20 +1039,37 @@ const deleteDate = item => {
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
 const createProduct = () => {
-  request.post(userApi.productSubmit, {
-    content: form,
-    create_reason: '创建商品',
-    user: { id: store.user.provider.id },
-    version: '1.0.0',
-    work_line_id: 1400,
-    work_operation: 4200
-  })
+  request
+    .post(userApi.productSubmit, {
+      content: form,
+      create_reason: '创建商品',
+      user: { id: store.user.provider.id },
+      version: '1.0.0',
+      work_line_id: 1400,
+      work_operation: 4200
+    })
+    .then(r => {
+      if (r.data.Code == '200') {
+        ElMessage({
+          type: 'success',
+          message: r.data.msg || '提交成功'
+        })
+        router.push('/workbench/productLunch')
+      }
+    })
 }
 
 onMounted(() => {
   if (!/new/.test(window.location.href)) {
     form = reactive(store.product)
     form.video_short = JSON.parse('"' + form?.video_short + '"')?.url || ''
+    if (!form.product_certified_features?.length)
+      form.product_certified_features = [
+        {
+          feature_id: '',
+          certificate: ''
+        }
+      ]
   } else isNewProdoct.value = true
 })
 </script>
@@ -1422,7 +1452,7 @@ const foodOptions = [
     }
   }
   .el-tooltip__trigger {
-    margin-left: 6px;
+    // margin-left: 6px;
   }
   .grid {
     display: grid;

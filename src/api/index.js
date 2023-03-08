@@ -20,7 +20,7 @@ request.interceptors.response.use(
         type: 'error',
         message: response.data.Msg
       })
-      console.warn('请求失败：',response.data)
+      console.warn('请求失败：', response.data)
     }
     return response
   },

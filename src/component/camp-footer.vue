@@ -12,8 +12,7 @@ footer {
   height: 80px;
   bottom: 0;
   display: flex;
-  justify-content: start;
-  padding-left: 30px;
+  justify-content: center;
   align-items: center;
   z-index: 99;
   box-shadow: -1px -3px 5px 2px rgb(0 0 0 / 4%);

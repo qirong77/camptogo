@@ -186,9 +186,9 @@
         </el-card>
       </el-form>
     </div>
-    <footer>
+    <campFooter>
       <el-button type="success" :disabled="!isUser">提交审核</el-button>
-    </footer>
+    </campFooter>
   </div>
 </template>
 
@@ -200,6 +200,7 @@ import { identifyTypes, peopleSize } from './common/options'
 import { request } from '../../../../api'
 import { userApi } from '../../../../api/modules/user/user.js'
 import CampUpload from '../../../../component/camp-upload.vue'
+import campFooter from '../../../../component/camp-footer.vue'
 const store = useStore()
 let info = reactive({
   provider: 51,
@@ -261,21 +262,6 @@ onMounted(() => {
   .el-input {
     width: auto;
     margin-right: 10px;
-  }
-  footer {
-    position: fixed;
-    background-color: white;
-    width: 100%;
-    height: 80px;
-    bottom: 0;
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    z-index: 99;
-    box-shadow: -1px -3px 5px 2px rgb(0 0 0 / 4%);
-    .el-button {
-      margin: 0 20px;
-    }
   }
 }
 .title {
