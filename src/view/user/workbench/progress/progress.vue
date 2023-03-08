@@ -25,7 +25,6 @@ onMounted(() => {
     })
     .then((res) => {
       progressData.value = res.data.details;
-      // console.log("📕", progressData);
     });
 });
 //查看
