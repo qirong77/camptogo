@@ -25,7 +25,8 @@ onMounted(() => {
     })
     .then((res) => {
       progressData.value = res.data.details;
-      // console.log("📕", progressData);
+      // console.log("📕", progressData._rawValue);
+      totalList.value = progressData._rawValue.length;
     });
 });
 //查看
@@ -33,10 +34,11 @@ const ChackProgress = ref(() => {
   // console.log("yes");
 });
 //页脚
-const currentPage4 = ref(4);
-const pageSize4 = ref(100);
+const currentPage = ref(1);
+const pageSize = ref(10);
 const background = ref(true);
 const disabled = ref(false);
+const totalList = ref(progressData.value.length);
 
 const handleSizeChange = (val) => {
   console.log(`${val} items per page`);
@@ -53,7 +55,10 @@ const handleCurrentChange = (val) => {
     <!-- 卡片 -->
     <div class="progress-card">
       <el-card class="box-card">
-        <el-table :data="progressData" style="width: 100%">
+        <el-table
+          :data="progressData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+          style="width: 100%"
+        >
           <el-table-column
             fixed
             prop="date_created"
@@ -69,7 +74,9 @@ const handleCurrentChange = (val) => {
             ></el-table-column
           >
           <el-table-column label="操作" align="center">
-            <el-button type="text" @click="ChackProgress">查看</el-button>
+            <el-button link @click="ChackProgress" style="color: limegreen"
+              >查看</el-button
+            >
           </el-table-column>
         </el-table>
       </el-card>
@@ -77,15 +84,15 @@ const handleCurrentChange = (val) => {
 
     <!-- 分页页脚 -->
     <footer>
-      <div class="foot-block-pagination">
+      <div class="paginationfoot-block-">
         <el-pagination
-          v-model:current-page="currentPage4"
-          v-model:page-size="pageSize4"
-          :page-sizes="[100, 200, 300, 400]"
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[5, 10, 15, 20, 25]"
           :disabled="disabled"
           :background="background"
           layout="total, prev, pager, next,sizes, jumper"
-          :total="400"
+          :total="totalList"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -108,7 +115,6 @@ const handleCurrentChange = (val) => {
     z-index: 99;
     box-shadow: -1px -3px 5px 2px rgb(0 0 0 / 4%);
     .foot-block-pagination {
-      margin-right: -29%;
     }
   }
 }
