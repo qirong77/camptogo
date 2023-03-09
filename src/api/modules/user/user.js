@@ -15,5 +15,6 @@ export const userApi = {
     '/api/e9b849a515a84327b424af7ccdbf2949/v1_0_0/provider/insurance/info/get',
   // 商品提交审核,立即上架
   product:
-    '/api/e9b849a515a84327b424af7ccdbf2949/web/v1_0_0/workticketaudit/submit'
+    '/api/e9b849a515a84327b424af7ccdbf2949/web/v1_0_0/workticketaudit/submit',
+  getProduct: '/api/e9b849a515a84327b424af7ccdbf2949/v1_0_0/product/get'
 }

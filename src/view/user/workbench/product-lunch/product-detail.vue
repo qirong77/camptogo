@@ -991,7 +991,7 @@ const createProduct = () => {
     .post(userApi.product, {
       content: form,
       create_reason: '创建商品',
-      user: { id: store.user.id},
+      user: { id: store.user.id },
       version: '1.0.0',
       work_line_id: 1400,
       work_operation: 4200
@@ -1011,7 +1011,7 @@ const saveDraft = () => {
     .post(userApi.product, {
       content: form,
       create_reason: '保存草稿',
-      user: { id: store.user.id},
+      user: { id: store.user.id },
       version: '1.0.0',
       work_line_id: 1400,
       work_operation: 4300
@@ -1089,6 +1089,13 @@ onMounted(() => {
     store.setProduct({})
     isNewProdoct.value = true
   }
+  request
+    .post('/api/e9b849a515a84327b424af7ccdbf2949/v1_0_0/product/get', {
+      id: store.product.id
+    })
+    .then(r => {
+      console.warn(r)
+    })
 })
 </script>
 <script>
