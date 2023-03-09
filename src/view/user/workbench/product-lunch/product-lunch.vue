@@ -41,7 +41,7 @@
       <product-card
         v-for="(p, index) in producets"
         :key="p.id"
-        :desc="p.short_name"
+        :desc="p.full_name"
         :price="p.price_selling"
         :start-time="p.product_launching_time"
         :end-time="p.product_expiration_time"

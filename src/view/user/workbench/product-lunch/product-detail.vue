@@ -800,7 +800,7 @@
       <template v-if="isNewProdoct">
         <el-button type="success" @click="createProduct">提交审核</el-button>
         <el-button type="success" disabled>查看预览</el-button>
-        <el-button type="success" disabled @click="">保存草稿</el-button>
+        <el-button type="success" @click="saveDraft">保存草稿</el-button>
       </template>
       <!-- 提交审核后 -->
       <template v-if="isCheck">
@@ -964,15 +964,14 @@ const onUploadSuccess = (file, key) => {
 
 const upShalve = () => {
   request
-    .post(userApi.upShalve, {
+    .post(userApi.product, {
       user: {
-        id: store.providerId
+        id: store.user?.id
       },
       version: '1.0.0',
       create_reason: '商品上架',
       work_line_id: 1400,
-      // 复制产品好像是4200
-      work_operation: 4400,
+      work_operation: 4600,
       content: {
         id: store.product?.id
       }
@@ -987,13 +986,49 @@ const upShalve = () => {
       }
     })
 }
-
-const updateProduct = () => {
-  request.post(userApi.productSubmit, {})
+const createProduct = () => {
+  request
+    .post(userApi.product, {
+      content: form,
+      create_reason: '创建商品',
+      user: { id: store.user.id},
+      version: '1.0.0',
+      work_line_id: 1400,
+      work_operation: 4200
+    })
+    .then(r => {
+      if (r.data.Code == '200') {
+        ElMessage({
+          type: 'success',
+          message: r.data.msg || '提交成功'
+        })
+        router.push('/workbench/productLunch')
+      }
+    })
 }
-const copyProcuct = () => {}
+const saveDraft = () => {
+  request
+    .post(userApi.product, {
+      content: form,
+      create_reason: '保存草稿',
+      user: { id: store.user.id},
+      version: '1.0.0',
+      work_line_id: 1400,
+      work_operation: 4300
+    })
+    .then(r => {
+      if (r.data.Code == '200') {
+        ElMessage({
+          type: 'success',
+          message: r.data.msg || '提交成功'
+        })
+        router.push('/workbench/productLunch')
+      }
+    })
+}
+
 // 新创建的
-const isNewProdoct = ref(true)
+const isNewProdoct = ref(false)
 // 提交审核后
 const isCheck = computed(() => '5200 5310'.includes(store.product.status))
 // 审核通过后
@@ -1038,26 +1073,6 @@ const deleteDate = item => {
 
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
-const createProduct = () => {
-  request
-    .post(userApi.productSubmit, {
-      content: form,
-      create_reason: '创建商品',
-      user: { id: store.user.provider.id },
-      version: '1.0.0',
-      work_line_id: 1400,
-      work_operation: 4200
-    })
-    .then(r => {
-      if (r.data.Code == '200') {
-        ElMessage({
-          type: 'success',
-          message: r.data.msg || '提交成功'
-        })
-        router.push('/workbench/productLunch')
-      }
-    })
-}
 
 onMounted(() => {
   if (!/new/.test(window.location.href)) {
@@ -1070,7 +1085,10 @@ onMounted(() => {
           certificate: ''
         }
       ]
-  } else isNewProdoct.value = true
+  } else {
+    store.setProduct({})
+    isNewProdoct.value = true
+  }
 })
 </script>
 <script>
@@ -1450,9 +1468,6 @@ const foodOptions = [
         height: 100%;
       }
     }
-  }
-  .el-tooltip__trigger {
-    // margin-left: 6px;
   }
   .grid {
     display: grid;
