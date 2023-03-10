@@ -83,7 +83,7 @@ const goPublishProduct = () => {
 }
 const gotoDetail = (index = 0) => {
   store.setProduct(producets.value[index])
-  router.push('/workbench/product/' + index)
+  router.push('/workbench/product/' + producets.value[index].id)
 }
 onMounted(() => {
   request

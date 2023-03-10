@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="manager-setting">
     <div class="title">主理人设置</div>
     <div>
       <el-form>
@@ -20,7 +20,7 @@
           <el-form-item label="主理人头像：">
             <div style="display: block">
               <span class="grayLabel">
-                请上传1张高质量头像，并确保该图片不存在侵犯他人知识产权的风险，若头像包含您已注册的商标，请在“主理人证明材料”处上传商标注册证。图片比例为1:1，支持jpg/png，小于1M。
+                请上传1张高质量头像，并确保该图片不存在侵犯他人知识产权的风险，若头像包含您已注册的商标，<br>请在“主理人证明材料”处上传商标注册证。图片比例为1:1，支持jpg/png，小于1M。
               </span>
               <campUpload :images="form.avatar_square" />
             </div>
@@ -48,17 +48,18 @@
               placeholder="请输入主理人介绍或团队介绍" />
           </el-form-item>
           <el-form-item label="主理人风采图：">
-            <div style="display: block">
+            <div style="width: 100%;">
               <span class="grayLabel">
                 请上传2-4张高质量横版风采图，图片比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序:1，支持jpg/png，小于1M。
               </span>
             </div>
+
             <campUpload :images="form.shows" />
           </el-form-item>
           <el-form-item label="荣誉资质展示：">
             <div style="display: block">
               <span class="grayLabel">
-                *请上传营业执照及其它荣誉资质“原件”“彩色”扫描件，涉及个人敏感信息的内容须在“证件号码”处打码，图片比例不限，支持jpg/png格式，上传数量不限，单张图片小于2M，可拖动图片排序
+                *请上传营业执照及其它荣誉资质“原件”“彩色”扫描件，涉及个人敏感信息的内容须在“证件号码”处打码，图片比例不限，支持jpg/png格式，<br>上传数量不限，单张图片小于2M
               </span>
               <campUpload :images="form.honor" />
             </div>

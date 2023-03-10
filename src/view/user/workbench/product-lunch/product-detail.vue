@@ -677,10 +677,9 @@
                 v-model="form.activity_time_location.start_time"
                 style="width: 160px"
                 placeholder="开始时间" />
-              <el-cascader
-                placeholder="请选择集合地点"
-                v-model="form.activity_time_location.start_location"
-                :options="areaOptions" />
+              <campPlace
+                v-model:place="form.activity_time_location.start_location"
+                :initial-place="form.activity_time_location.start_location" />
               <el-input
                 placeholder="请输入详细地址"
                 v-model="form.activity_time_location.start_location_detailed" />
@@ -698,10 +697,9 @@
                 v-model="form.activity_time_location.end_time"
                 style="width: 160px"
                 placeholder="开始时间" />
-              <el-cascader
-                placeholder="请选择集合地点"
-                v-model="form.activity_time_location.end_location"
-                :options="areaOptions" />
+              <campPlace
+                v-model:place="form.activity_time_location.end_location"
+                :initial-place="form.activity_time_location.end_location" />
               <el-input
                 placeholder="请输入详细地址"
                 v-model="form.activity_time_location.end_location_detailed" />
@@ -820,7 +818,6 @@
 </template>
 <script setup>
 import ProductForm from './components/product-form.vue'
-import { regionData } from 'element-china-area-data'
 import { Plus } from '@element-plus/icons-vue'
 import { request, authHeader } from '../../../../api/index.js'
 import { userApi } from '../../../../api/modules/user/user.js'
@@ -829,19 +826,20 @@ import { useStore } from '../../../../store'
 import campFooter from '../../../../component/camp-footer.vue'
 import campDataPicker from '../../../../component/camp-data-picker.vue'
 import campUpload from '../../../../component/camp-upload.vue'
+import campPlace from '../../../../component/camp-place.vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 const radio1 = ref(true)
 const store = useStore()
 const router = useRouter()
-const areaOptions = ref(regionData)
 const isLiabilitySelf = computed(
-  () => form.liability_insurance_self_details === insurenceOptions[0].value
+  () =>
+    form.value.liability_insurance_self_details === insurenceOptions[0].value
 )
 const isAccidentSelf = computed(
-  () => form.accident_insurance_self_details === insurenceOptions[0].value
+  () => form.value.accident_insurance_self_details === insurenceOptions[0].value
 )
-let form = reactive({
+const form = ref({
   full_name: '',
   categories: [],
   group_limit_size: 0,
@@ -959,7 +957,7 @@ let form = reactive({
 })
 
 const onUploadSuccess = (file, key) => {
-  form[key] = URL.createObjectURL(file.raw)
+  form.value[key] = URL.createObjectURL(file.raw)
 }
 
 const upShalve = () => {
@@ -989,7 +987,7 @@ const upShalve = () => {
 const createProduct = () => {
   request
     .post(userApi.product, {
-      content: form,
+      content: form.value,
       create_reason: '创建商品',
       user: { id: store.user.id },
       version: '1.0.0',
@@ -1009,7 +1007,7 @@ const createProduct = () => {
 const saveDraft = () => {
   request
     .post(userApi.product, {
-      content: form,
+      content: form.value,
       create_reason: '保存草稿',
       user: { id: store.user.id },
       version: '1.0.0',
@@ -1035,13 +1033,13 @@ const isCheck = computed(() => '5200 5310'.includes(store.product.status))
 const isChecked = computed(() => '5900 5300'.includes(store.product.status))
 
 const addAdvantage = () => {
-  form.advantage.push({
+  form.value.advantage.push({
     title: '',
     detail: ''
   })
 }
 const addOutline = () => {
-  form.outline.push({
+  forform.value.outline.push({
     title: '',
     detail: ''
   })
@@ -1054,7 +1052,7 @@ const addDaily = arr => {
   })
 }
 const addDate = () => {
-  form.daily_schedule.push({
+  form.value.daily_schedule.push({
     date: '',
     content: [
       {
@@ -1066,7 +1064,7 @@ const addDate = () => {
   })
 }
 const deleteDate = item => {
-  form.daily_schedule = form.daily_schedule.filter(
+  form.value.daily_schedule = form.value.daily_schedule.filter(
     schedule => schedule !== item
   )
 }
@@ -1076,26 +1074,30 @@ const dialogVisible = ref(false)
 
 onMounted(() => {
   if (!/new/.test(window.location.href)) {
-    form = reactive(store.product)
-    form.video_short = JSON.parse('"' + form?.video_short + '"')?.url || ''
-    if (!form.product_certified_features?.length)
-      form.product_certified_features = [
-        {
-          feature_id: '',
-          certificate: ''
+    request
+      .post('/api/e9b849a515a84327b424af7ccdbf2949/v1_0_0/product/get', {
+        id: store.product.id
+      })
+      .then(r => {
+        if (r.data.Code == '200') {
+          const product = r.data.details
+          product.video_short =
+            JSON.parse('"' + product?.video_short + '"')?.url || ''
+          if (!product.product_certified_features?.length) {
+            product.product_certified_features = [
+              {
+                feature_id: '',
+                certificate: ''
+              }
+            ]
+          }
+          form.value = product
         }
-      ]
+      })
   } else {
     store.setProduct({})
     isNewProdoct.value = true
   }
-  request
-    .post('/api/e9b849a515a84327b424af7ccdbf2949/v1_0_0/product/get', {
-      id: store.product.id
-    })
-    .then(r => {
-      console.warn(r)
-    })
 })
 </script>
 <script>

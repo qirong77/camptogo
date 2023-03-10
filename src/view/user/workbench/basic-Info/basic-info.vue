@@ -9,17 +9,20 @@
           </div>
           <div class="bBody">
             <el-form-item label="注册手机：">
-              <el-input disabled v-model="store.user.mobile"></el-input>
+              <el-input
+                disabled
+                v-model="store.user.provider.mobile"></el-input>
             </el-form-item>
-            <el-form-item label="注册邮箱：">
-              <span>{{ store.user.email || '无' }}</span>
+            <el-form-item label="绑定邮箱：">
+              <span>{{ store.user.provider.email || '无' }}</span>
               <span class="grayLabel">
                 *该邮箱为系统默认邮箱之后用于收平台通知，请及时查看邮件
               </span>
             </el-form-item>
             <el-form-item label="认证状态：">
-              <!-- <span v-if="store.user?.provider.id">已认证</span>
-              <span v-else>未认证</span> -->
+              <span v-if="store.user.provider.date_created">已认证 </span>
+              <span v-else>未认证</span>
+              <span class="grayLabel">如需更改认证信息，请联系客服</span>
             </el-form-item>
           </div>
         </el-card>
@@ -28,7 +31,7 @@
             <div style="font-weight: bold; margin-right: 20px">认证详情</div>
           </div>
           <div class="bBody">
-            <el-form-item label="认证类型：" v-model="info.applicant_type">
+            <el-form-item label="认证类型：">
               <el-cascader
                 placeholder="请选择认证类型"
                 v-model="info.applicant_type"
@@ -67,19 +70,20 @@
                 placeholder="年/月/日" />
             </el-form-item>
             <el-form-item label="经营住所：">
-              <el-cascader
-                placeholder="请选择国家/地区"
+              <CampPlace
                 v-model="info.provider_registration_area"
-                :options="regionData" />
-              <el-input
-                placeholder="请输入详细地址"
-                style="width: 300px"
-                v-model="info.registration_detail_location"></el-input>
+                :initial-place="info.provider_registration_area" />
             </el-form-item>
             <el-form-item label="法定代表人：">
-              <el-input placeholder="姓名"></el-input>
-              <el-input placeholder="请输入电话号码"></el-input>
-              <el-input placeholder="请输入身份证号"></el-input>
+              <el-input
+                placeholder="姓名"
+                v-model="info.representative_name"></el-input>
+              <el-input
+                placeholder="请输入电话号码"
+                v-model="info.representative_phone"></el-input>
+              <el-input
+                placeholder="请输入身份证号"
+                v-model="info.representative_realid"></el-input>
             </el-form-item>
             <el-form-item label="身份证件：">
               <div style="display: block; width: 90%">
@@ -116,15 +120,13 @@
                 placeholder="输入账号请勿空格"></el-input>
             </el-form-item>
             <el-form-item label="通讯地址：">
-              <el-cascader
-                style="width: 300px"
-                v-model="info.tax_payer_address"
-                placeholder="请选择地点"
-                :options="regionData" />
+              <CampPlace
+                v-model:place="info.tax_payer_address"
+                :initial-place="info.tax_payer_address" />
               <el-input
                 v-model="info.registration_detail_location"
                 style="width: 300px"
-                placeholder="请输入详细pro地址"></el-input>
+                placeholder="请输入详细地址"></el-input>
             </el-form-item>
             <el-form-item label="电话号码：">
               <el-input
@@ -201,10 +203,16 @@ import { request } from '../../../../api'
 import { userApi } from '../../../../api/modules/user/user.js'
 import CampUpload from '../../../../component/camp-upload.vue'
 import campFooter from '../../../../component/camp-footer.vue'
+import CampPlace from '../../../../component/camp-place.vue'
+
 const store = useStore()
+
 let info = reactive({
   provider: 51,
   date_created: '2022-08-30T15:42:07Z',
+  representative_name: '',
+  representative_phone: '',
+  representative_realid: '',
   applicant_type: 1,
   identify_type: 1,
   identify_number: '91110106335526776T',
@@ -232,6 +240,7 @@ let info = reactive({
   admin_license: null,
   applicant_letter: null
 })
+
 const submit = () => {
   request.post(userApi.basicInfoSubmit, {
     provider_id: store.user.provider?.id || 0,
@@ -248,7 +257,7 @@ onMounted(() => {
       console.log('用户基础信息的数据\n', res.data)
       if (res.data.Code == 200) {
         isUser.value = false
-        // info = reactive(res.data)
+        info = reactive(res.data.details)
       }
     })
 })
@@ -256,9 +265,6 @@ onMounted(() => {
 
 <style lang="scss">
 .basic-info {
-  .el-form-item__label {
-    min-width: 100px;
-  }
   .el-input {
     width: auto;
     margin-right: 10px;

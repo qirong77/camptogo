@@ -36,10 +36,7 @@ defineProps({
   }
   .el-form-item {
     margin: 40px 0;
-    .el-form-item__label {
-      width: 130px;
-      justify-content: flex-start;
-    }
+
   }
   .el-input-number {
     width: 88px;

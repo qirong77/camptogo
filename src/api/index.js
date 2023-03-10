@@ -18,7 +18,7 @@ request.interceptors.response.use(
     if (response.data.Code != '200') {
       ElMessage({
         type: 'error',
-        message: response.data.Msg
+        message: '请求失败：' + response.data.Msg
       })
       console.warn('请求失败：', response.data)
     }

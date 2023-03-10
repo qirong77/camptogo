@@ -5,7 +5,6 @@ export const identifyTypes = [
     children: [
       {
         label: '学校',
-
         value: '1-1'
       },
       {
@@ -60,7 +59,7 @@ export const identifyTypes = [
   },
   {
     label: '个人',
-    value: '3-0'
+    value: '4-0'
   }
 ]
 export const peopleSize = ['1-10','10-50','50-100','100人以上']

@@ -2,6 +2,10 @@
   --primary-color: #93d900;
   --el-color-primary: var(--primary-color);
 }
+.el-form-item__label {
+  width: 130px;
+  justify-content: flex-start;
+}
 .el-button--primary:focus,
 .el-button--primary:hover {
   background-color: #b2eb38;

@@ -37,10 +37,10 @@ const navs = [
   //   label: "使用反馈",
   //   navTo: "/workbench/feedback",
   // },
-  // {
-  //   label: "订单管理",
-  //   navTo: "/workbench/manager-ordering",
-  // },
+  {
+    label: "订单管理",
+    navTo: "/workbench/manager-ordering",
+  },
 ];
 </script>
 
