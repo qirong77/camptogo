@@ -1,29 +1,29 @@
 export const identifyTypes = [
   {
     label: '法人',
-    value: '1-0',
+    value: 1,
     children: [
       {
         label: '学校',
-        value: '1-1'
+        value: 1
       },
       {
         label: '研究机构',
 
-        value: '1-2'
+        value: 1
       },
       {
         label: '旅行社',
 
-        value: '1-3'
+        value: 1
       },
       {
         label: '非旅行社企业',
-        value: '1-4'
+        value: 1
       },
       {
         label: '协会',
-        value: '1-5'
+        value: 1
       },
       {
         label: '公益机构',
@@ -36,7 +36,7 @@ export const identifyTypes = [
     ]
   },
   {
-    value: '2-0',
+    value: 2,
     label: '非法人组织',
     children: [
       {
@@ -55,11 +55,11 @@ export const identifyTypes = [
   },
   {
     label: '个体工商户',
-    value: '3-0'
+    value: 3
   },
   {
     label: '个人',
-    value: '4-0'
+    value: 4
   }
 ]
 export const peopleSize = ['1-10','10-50','50-100','100人以上']

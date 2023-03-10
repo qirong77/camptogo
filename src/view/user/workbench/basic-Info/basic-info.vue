@@ -40,11 +40,11 @@
               <el-select
                 placeholder="请选择认证证件类型"
                 v-model="info.identify_type">
-                <template v-if="info.applicant_type == '3-0'">
-                  <el-option label="居民身份证" value="1"></el-option>
-                  <el-option label="护照" value="2"></el-option>
+                <template v-if="info.applicant_type == 3">
+                  <el-option label="居民身份证" :value="1"></el-option>
+                  <el-option label="护照" :value="2"></el-option>
                 </template>
-                <el-option v-else label="营业执照" value="3"></el-option>
+                <el-option v-else label="营业执照" :value="3"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="营业执照：">
@@ -189,13 +189,15 @@
       </el-form>
     </div>
     <campFooter>
-      <el-button type="success" :disabled="!isUser" @click="submit">提交审核</el-button>
+      <el-button type="success" :disabled="!isUser" @click="submit"
+        >提交审核</el-button
+      >
     </campFooter>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useStore } from '../../../../store'
 import { identifyTypes, peopleSize } from './common/options'
 import { request } from '../../../../api'
@@ -213,7 +215,7 @@ let info = ref({
   representative_phone: '',
   representative_realid: '',
   applicant_type: 1,
-  identify_type: 1,
+  identify_type: '',
   identify_number: '91110106335526776T',
   applicant_name: '北京天籁知音国际咨询有限公司',
   provider_registration_area: '中国_北京_通州_',
@@ -239,7 +241,13 @@ let info = ref({
   admin_license: null,
   applicant_letter: null
 })
-
+watch(
+  () => info.applicant_type,
+  () => {
+    console.log('11')
+    info.value.identify_type = ''
+  }
+)
 const submit = () => {
   request.post(userApi.basicInfoSubmit, {
     provider_id: store.user.provider.id || 0,
