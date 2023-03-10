@@ -189,14 +189,13 @@
       </el-form>
     </div>
     <campFooter>
-      <el-button type="success" :disabled="!isUser">提交审核</el-button>
+      <el-button type="success" :disabled="!isUser" @click="submit">提交审核</el-button>
     </campFooter>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, reactive } from 'vue'
-import { regionData } from 'element-china-area-data'
+import { onMounted, ref, } from 'vue'
 import { useStore } from '../../../../store'
 import { identifyTypes, peopleSize } from './common/options'
 import { request } from '../../../../api'
@@ -207,7 +206,7 @@ import CampPlace from '../../../../component/camp-place.vue'
 
 const store = useStore()
 
-let info = reactive({
+let info = ref({
   provider: 51,
   date_created: '2022-08-30T15:42:07Z',
   representative_name: '',
@@ -243,7 +242,7 @@ let info = reactive({
 
 const submit = () => {
   request.post(userApi.basicInfoSubmit, {
-    provider_id: store.user.provider?.id || 0,
+    provider_id: store.user.provider.id || 0,
     ...info
   })
 }
@@ -257,7 +256,7 @@ onMounted(() => {
       console.log('用户基础信息的数据\n', res.data)
       if (res.data.Code == 200) {
         isUser.value = false
-        info = reactive(res.data.details)
+        info.value = res.data.details
       }
     })
 })

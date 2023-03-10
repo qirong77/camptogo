@@ -4,14 +4,13 @@
     <div class="title">使用反馈</div>
     <!-- 主体 -->
     <div>
-      <el-form :model="formData" label-width="130px" label-position="left">
+      <el-form label-width="130px" label-position="left">
         <el-card class="block">
           <el-form-item label="反馈类别：" class="formItem">
             <el-input placeholder="" style="width: 500px"></el-input>
           </el-form-item>
           <el-form-item label="反馈内容：" class="formItem">
             <el-input
-              v-model="formData.test11"
               style="width: 500px"
               :maxlength="200"
               :rows="4"
@@ -46,9 +45,6 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-
-let formData = reactive({});
 </script>
 
 <style lang="scss" scoped>
