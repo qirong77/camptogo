@@ -42,8 +42,7 @@
           style="width: 400px"
           v-model="searchWord"
           placeholder="请输入"
-          class="input-with-select"
-        >
+          class="input-with-select">
           <template #prepend>
             <el-select v-model="selectTag" style="width: 115px">
               <el-option label="商品状态" value="1" />
@@ -57,13 +56,9 @@
         <div class="buttons" style="margin-left: 40px">
           <el-button @click="searchWord = ''">重置</el-button>
           <el-button type="primary">查询</el-button>
-          <span class="desc" style="color: gray; font-size: small; margin-left: 20px"
-            >*已上架商品请前往商品管理模块进行操作</span
-          >
           <el-button
             type="primary"
             @click="() => goPublishProduct()"
-            style="position: relative; left: 48%"
             >发布商品</el-button
           >
           <span
@@ -86,39 +81,38 @@
         :lunch-status="p.status"
         :image-url="p.horizontal_shows[0].url"
         @go-to-detail="() => gotoDetail(index)"
-        :status="p.status"
-      >
+        :status="p.status">
       </product-card>
     </div>
   </div>
 </template>
 
 <script setup>
-import ProductCard from "./components/product-card.vue";
-import { Search } from "@element-plus/icons-vue";
-import { ref, onMounted, watch } from "vue";
-import { userApi } from "../../../../api/modules/user/user";
-import { request } from "../../../../api";
-import { useStore } from "../../../../store";
-import { useRouter } from "vue-router";
-const router = useRouter();
-const activeTab = ref("all");
-const searchWord = ref("");
-const selectTag = ref("");
-const store = useStore();
-const producets = ref([]);
-const totalProducts = ref([]);
+import ProductCard from './components/product-card.vue'
+import { Search } from '@element-plus/icons-vue'
+import { ref, onMounted, watch } from 'vue'
+import { userApi } from '../../../../api/modules/user/user'
+import { request } from '../../../../api'
+import { useStore } from '../../../../store'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const activeTab = ref('all')
+const searchWord = ref('')
+const selectTag = ref('')
+const store = useStore()
+const producets = ref([])
+const totalProducts = ref([])
 watch(activeTab, () => {
-  console.log("📕", activeTab.value);
-  if (activeTab.value === "all") producets.value = totalProducts.value;
+  console.log('📕', activeTab.value)
+  if (activeTab.value === 'all') producets.value = totalProducts.value
   else
-    producets.value = producets.value.filter((p) => {
-      if (activeTab.value.includes(p.status)) return p;
-    });
-});
+    producets.value = producets.value.filter(p => {
+      if (activeTab.value.includes(p.status)) return p
+    })
+})
 const goPublishProduct = () => {
-  router.push("/workbench/product/new");
-};
+  router.push('/workbench/product/new')
+}
 const gotoDetail = (index = 0) => {
   store.setProduct(producets.value[index])
   router.push('/workbench/product/' + producets.value[index].id)
@@ -126,7 +120,7 @@ const gotoDetail = (index = 0) => {
 onMounted(() => {
   request
     .post(userApi.getList, {
-      user_id: store.user.id,
+      user_id: store.user.id
     })
     .then(res => {
       producets.value =
@@ -235,7 +229,7 @@ onMounted(() => {
   }
 }
 .title {
-  font-family: "PingFang SC";
+  font-family: 'PingFang SC';
   font-style: normal;
   font-weight: 600;
   margin-bottom: 16px;

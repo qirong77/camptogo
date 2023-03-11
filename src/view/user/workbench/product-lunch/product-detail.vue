@@ -993,6 +993,8 @@ const upShalve = () => {
     })
 }
 const createProduct = () => {
+  
+  return
   request
     .post(userApi.product, {
       content: form.value,
