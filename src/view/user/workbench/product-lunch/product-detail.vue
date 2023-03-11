@@ -1,788 +1,805 @@
 <template>
   <div class="product-detail">
     <main>
-      <product-form title="商品基本信息" id="1">
-        <template #form>
-          <el-form-item label="商品名称：">
-            <el-input
-              style="width: 582px"
-              v-model="form.full_name"
-              placeholder="请输入商品名称,作为商品标题显示" />
-            <el-tooltip
-              content="作为商品标题显示，请填写商品特色和优势的关键词，无需出现“招生年龄，时间地点，活动天数”等重复信息"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="商品类别：">
-            <el-select
-              multiple
-              placeholder="点击选择"
-              style="width: 400px"
-              v-model="form.categories">
-              <el-option
-                v-for="item in typeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="最低成团人数：">
-            <el-radio-group v-model="radio1">
-              <el-radio :label="true"
-                >设置低于
-                <el-input-number
-                  min="0"
-                  :disabled="!radio1"
-                  v-model="form.group_limit_size"
-                  controls-position="right" />
-                人不成团
-                <span class="desc"
-                  >*不成团将全额退款，互不承担责任</span
-                ></el-radio
-              >
-              <el-radio :label="false" v-model="form.group_limit_if"
-                >商品不设最低成团数
-                <span class="desc">*有任1订单操作审核通过即成团</span></el-radio
-              >
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="活动时间：">
-            <el-date-picker
-              v-model="form.activity_start_time"
-              value-format="YYYY-MM-DD-HH:mm"
-              type="datetime"
-              placeholder="开始日期" />
-            <span> - </span>
-            <el-date-picker
-              type="datetime"
-              value-format="YYYY-MM-DD-HH:mm"
-              v-model="form.activity_end_time"
-              placeholder="结束日期" />
-          </el-form-item>
-
-          <el-form-item
-            label="划线价格：
-          ">
-            <el-input-number
-              min="0"
-              style="width: 100px"
-              v-model="form.price_original"
-              controls-position="right" />
-            <span class="desc">*原价（单位：元）</span>
-          </el-form-item>
-          <el-form-item
-            label="未划线价格：
-          ">
-            <el-input-number
-              min="0"
-              style="width: 100px"
-              v-model="form.price_selling"
-              controls-position="right" />
-            <span class="desc">*原价（单位：元）</span>
-          </el-form-item>
-
-          <el-form-item label="退改方案：">
-            <el-cascader
-              style="width: 250px"
-              placeholder="请选择退改方案"
-              v-model="form.refundpolicy_id"
-              :options="backOptions" />
-            <el-tooltip
-              content="【无理由退】在一定时间范围内，您可申请无理由退订，服务商将无条件退返除已支付合理费用外的剩余费用
-【不可退】商品和服务在初次发布时就标记了不可退订的标识，或该商品和服务进入了早先公布的不可退订状态。
-您所选择的退改方案详情请见《营探预订和退费须知》"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item>
-            <template #label>
-              <span style="line-height: 16px"
-                >活动特色：<br />
-                <span class="desc">选填</span>
-              </span>
-            </template>
-            <el-select
-              multiple
-              placeholder="请选择2-7项活动特色"
-              v-model="form.product_general_features"
-              style="width: 600px">
-              <el-option
-                v-for="item in features"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value" />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <template #label>
-              <span style="line-height: 16px"
-                >优势认证：<br />
-                <span class="desc">选填</span>
-              </span>
-            </template>
-            <div>
-              <div>请选择认证类型</div>
-              <el-select
-                v-model="form.product_certified_features[0].feature_id">
-                <el-option
-                  v-for="f in certifiedFeatures"
-                  :value="f.value"
-                  :label="f.label" />
-              </el-select>
-              <div>
-                请上传主理人团队获得的国际奖项证书<span class="desc">
-                  上传文件要清晰，四角齐全，需彩扫描件、凭证等
-                </span>
-              </div>
-              <campUpload
-                :images="form.product_certified_features[0].certificate" />
-            </div>
-          </el-form-item>
-        </template>
-      </product-form>
-      <product-form title="课程详情" id="2">
-        <template #form>
-          <el-form-item label="活动人数：">
-            <el-input-number
-              min="0"
-              v-model="form.size_valid"
-              controls-position="right"
-              placeholder="整数" />&nbsp;人
-            <span class="desc">*活动人数为参与活动总人数，非库存数</span>
-          </el-form-item>
-          <el-form-item label="报名年龄：">
-            <el-input-number
-              min="0"
-              v-model="form.age_min"
-              controls-position="right"
-              placeholder="整数" />&nbsp;岁至&nbsp;
-            <el-input-number
-              min="0"
-              v-model="form.age_max"
-              controls-position="right"
-              placeholder="整数" />
-            <el-tooltip
-              content="请确认您所投保保险的年龄承保范围，不符合要求的，保险公司可能不予承保。"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="日程形式：">
-            <el-select placeholder="请选择住宿形式" v-model="form.stay_if">
-              <el-option label="需要住宿" :value="true"></el-option>
-              <el-option label="不需要住宿" :value="false"></el-option>
-            </el-select>
-            &nbsp;&nbsp;
-            <el-select
-              placeholder="请选择参与形式"
-              v-model="form.activity_mode">
-              <el-option
-                v-for="item in ['独立', '亲子', '亲子单飞']"
-                :value="item"
-                key="item" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="难易度：">
-            <el-rate
-              :texts="['1星', '2星', '3星', '4星', '5星']"
-              show-text
-              v-model="form.difficulty" />
-            <el-tooltip
-              content="1星无门槛，2星为入门级，3星为需要一定经验，4星为有一定专业背景，5星为需达到考核标准"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="活动类型：">
-            <el-select
-              placeholder="请选择活动形式"
-              v-model="form.activity_type">
-              <el-option
-                v-for="item in activityTypes"
-                :value="item.value"
-                :key="item.label"
-                :label="item.label" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="师生比：">
-            <el-input-number
-              min="0"
-              placeholder="整数"
-              controls-position="right"
-              style="margin-right: 10px"
-              v-model="form.teacher_student[0]" />
-            <el-input-number
-              placeholder="整数"
-              min="0"
-              controls-position="right"
-              v-model="form.teacher_student[1]" />
-            <span class="desc"> 活动团队职员总数:活动人数 </span>
-          </el-form-item>
-          <el-form-item label="支持语言：">
-            <el-select
-              style="width: 80%"
-              multiple
-              v-model="form.languages"
-              placeholder="点击选择，可多选">
-              <el-option
-                v-for="item in languages"
-                :key="item.label"
-                :label="item.label"
-                :value="item.value.name" />
-            </el-select>
-          </el-form-item>
-        </template>
-      </product-form>
-      <product-form title="活动日程表 " id="3">
-        <template #form>
-          <div class="desc" style="margin-top: 20px">
-            *请在出行地点有所变更的当日，在日程安排最前端以【城市/活动地点】的形式标明，如没有【城市/活动地点】变更可不标明，仅填写具体日程即可。
-          </div>
-          <el-form-item label="日程表">
-            <div
-              class="scheduls"
-              style="flex-direction: column"
-              v-for="(item, index) in form.daily_schedule">
-              <div style="display: flex">
-                <campDataPicker
-                  v-model="item.date"
-                  style="margin-right: 20px" />
-                <el-button
-                  type="success"
-                  @click="addDate"
-                  v-if="index === form.daily_schedule.length - 1"
-                  >添加日期</el-button
-                >
-                <el-button @click="() => deleteDate(item)">删除日期</el-button>
-              </div>
-              <div style="background-color: #f2f2f2;">
-                <div class="schdule" v-for="daily in item.content">
-                  <div class="schdule-box">
-                    <el-time-picker
-                      style="width: 20%"
-                      value-format="YYYY-MM-DDTHH:mm"
-                      v-model="daily.start_time" />
-                    <span>-</span>
-                    <el-time-picker
-                      value-format="YYYY-MM-DDTHH:mm"
-                      style="width: 20%"
-                      v-model="daily.end_time" />
-                    <el-input
-                      placeholder="请填写日程安排"
-                      style="width: 50%"
-                      v-model="daily.detail" />
-                    <el-icon
-                      @click="
-                        () =>
-                          (item.content = item.content.filter(
-                            _daily => _daily !== daily
-                          ))
-                      "
-                      ><Delete
-                    /></el-icon>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="add"
-                @click="() => addDaily(item.content)"
-                style="margin-top: 10px; cursor: pointer">
-                添加一行
-              </div>
-            </div>
-          </el-form-item>
-        </template>
-      </product-form>
-      <product-form title="保险信息" id="4">
-        <template #form>
-          <el-form-item label="组织者责任险：">
-            <el-cascader
-              style="width: 80%"
-              v-model="form.liability_insurance_self_details"
-              :options="insurenceOptions"
-              placeholder="请选择保险信息" />
-            <el-tooltip
-              content="您选择“购买第三方保险”并提交商品审核的行为，即视为您授权营探将您所录入的商品信息提交至上述保险公司，上述信息将作为核保及日后理赔的依据"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="人身意外险：">
-            <el-cascader
-              style="width: 80%"
-              v-model="form.accident_insurance_self_details"
-              :options="insurenceOptions"
-              clearable
-              placeholder="请选择保险信息" />
-            <el-tooltip
-              content="您选择“购买第三方保险”并提交商品审核的行为，即视为您授权营探将您所录入的商品信息提交至上述保险公司，上述信息将作为核保及日后理赔的依据"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="最终核保结果：">
-            <div>
-              <span class="desc">
-                *核保公司核保完成后,核保结果会自动在此呈现
-              </span>
+      <el-form ref="formRef" :model="form">
+        <product-form title="商品基本信息" id="1">
+          <template #form>
+            <CampFormItem label="商品名称：" prop="full_name">
+              <el-input
+                style="width: 582px"
+                v-model="form.full_name"
+                placeholder="请输入商品名称,作为商品标题显示" />
               <el-tooltip
-                content="若有更多被保险人如拼团商品中非通过营探报名的出行人、主办方员工等需一并投保的，请在T-2日（T为活动开始日期）17时前在商品管理-保险投保模块上传其他被保险人的姓名、证件号码、性别、出生年月，平台将在T-2日24时前一次性向保险公司发送被保险人信息。因您自身原因导致上述被保险人信息未能报送成功的，营探不承担责任。"
+                content="作为商品标题显示，请填写商品特色和优势的关键词，无需出现“招生年龄，时间地点，活动天数”等重复信息"
                 placement="top-start">
                 <el-icon><QuestionFilled /></el-icon>
               </el-tooltip>
-              <div class="tag">
-                <el-tag class="mx-1" closable type="info"
-                  >待保险公司核保</el-tag
+            </CampFormItem>
+            <CampFormItem label="商品类别：" prop="categories" :is-array="true">
+              <el-select
+                multiple
+                placeholder="点击选择"
+                style="width: 400px"
+                v-model="form.categories">
+                <el-option
+                  v-for="item in typeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value" />
+              </el-select>
+            </CampFormItem>
+            <CampFormItem label="最低成团人数：">
+              <el-radio-group v-model="radio1">
+                <el-radio :label="true"
+                  >设置低于
+                  <el-input-number
+                    :min="0"
+                    :disabled="!radio1"
+                    v-model="form.group_limit_size"
+                    controls-position="right" />
+                  人不成团
+                  <span class="desc"
+                    >*不成团将全额退款，互不承担责任</span
+                  ></el-radio
                 >
+                <el-radio :label="false" v-model="form.group_limit_if"
+                  >商品不设最低成团数
+                  <span class="desc"
+                    >*有任1订单操作审核通过即成团</span
+                  ></el-radio
+                >
+              </el-radio-group>
+            </CampFormItem>
+            <CampFormItem label="活动时间：" prop="activity_start_time">
+              <el-date-picker
+                v-model="form.activity_start_time"
+                value-format="YYYY-MM-DD-HH:mm"
+                type="datetime"
+                placeholder="开始日期" />
+              <span> - </span>
+              <el-date-picker
+                type="datetime"
+                value-format="YYYY-MM-DD-HH:mm"
+                v-model="form.activity_end_time"
+                placeholder="结束日期" />
+            </CampFormItem>
+
+            <CampFormItem label="划线价格：" prop="price_original">
+              <el-input-number
+                :min="0"
+                style="width: 100px"
+                v-model="form.price_original"
+                controls-position="right" />
+              <span class="desc">*原价（单位：元）</span>
+            </CampFormItem>
+            <CampFormItem label="未划线价格：" prop="price_selling">
+              <el-input-number
+                :min="0"
+                style="width: 100px"
+                v-model="form.price_selling"
+                controls-position="right" />
+              <span class="desc">*原价（单位：元）</span>
+            </CampFormItem>
+
+            <CampFormItem label="退改方案：" prop="refundpolicy_id">
+              <el-cascader
+                style="width: 250px"
+                placeholder="请选择退改方案"
+                v-model="form.refundpolicy_id"
+                :options="backOptions" />
+              <el-tooltip
+                content="【无理由退】在一定时间范围内，您可申请无理由退订，服务商将无条件退返除已支付合理费用外的剩余费用
+【不可退】商品和服务在初次发布时就标记了不可退订的标识，或该商品和服务进入了早先公布的不可退订状态。
+您所选择的退改方案详情请见《营探预订和退费须知》"
+                placement="top-start">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </CampFormItem>
+            <CampFormItem>
+              <template #label>
+                <span style="line-height: 16px"
+                  >活动特色：<br />
+                  <span class="desc">选填</span>
+                </span>
+              </template>
+              <el-select
+                multiple
+                placeholder="请选择2-7项活动特色"
+                v-model="form.product_general_features"
+                style="width: 600px">
+                <el-option
+                  v-for="item in features"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value" />
+              </el-select>
+            </CampFormItem>
+            <CampFormItem>
+              <template #label>
+                <span style="line-height: 16px"
+                  >优势认证：<br />
+                  <span class="desc">选填</span>
+                </span>
+              </template>
+              <div>
+                <div>请选择认证类型</div>
+                <el-select
+                  v-model="form.product_certified_features[0].feature_id">
+                  <el-option
+                    v-for="f in certifiedFeatures"
+                    :value="f.value"
+                    :label="f.label" />
+                </el-select>
+                <div>
+                  请上传主理人团队获得的国际奖项证书<span class="desc">
+                    上传文件要清晰，四角齐全，需彩扫描件、凭证等
+                  </span>
+                </div>
+                <campUpload
+                  :images="form.product_certified_features[0].certificate" />
               </div>
+            </CampFormItem>
+          </template>
+        </product-form>
+        <product-form title="课程详情" id="2">
+          <template #form>
+            <CampFormItem label="活动人数：" prop="size_valid">
+              <el-input-number
+                :min="0"
+                v-model="form.size_valid"
+                controls-position="right"
+                placeholder="整数" />&nbsp;人
+              <span class="desc">*活动人数为参与活动总人数，非库存数</span>
+            </CampFormItem>
+            <CampFormItem label="报名年龄：" prop="age_min">
+              <el-input-number
+                :min="0"
+                v-model="form.age_min"
+                controls-position="right"
+                placeholder="整数" />&nbsp;岁至&nbsp;
+              <el-input-number
+                :min="0"
+                v-model="form.age_max"
+                controls-position="right"
+                placeholder="整数" />
+              <el-tooltip
+                content="请确认您所投保保险的年龄承保范围，不符合要求的，保险公司可能不予承保。"
+                placement="top-start">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </CampFormItem>
+            <CampFormItem label="日程形式：" prop="activity_mode">
+              <el-select placeholder="请选择住宿形式" v-model="form.stay_if">
+                <el-option label="需要住宿" :value="true"></el-option>
+                <el-option label="不需要住宿" :value="false"></el-option>
+              </el-select>
+              &nbsp;&nbsp;
+              <el-select
+                placeholder="请选择参与形式"
+                v-model="form.activity_mode">
+                <el-option
+                  v-for="item in ['独立', '亲子', '亲子单飞']"
+                  :value="item"
+                  key="item" />
+              </el-select>
+            </CampFormItem>
+            <CampFormItem label="难易度：" prop="difficulty">
+              <el-rate
+                :texts="['1星', '2星', '3星', '4星', '5星']"
+                show-text
+                v-model="form.difficulty" />
+              <el-tooltip
+                content="1星无门槛，2星为入门级，3星为需要一定经验，4星为有一定专业背景，5星为需达到考核标准"
+                placement="top-start">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </CampFormItem>
+            <CampFormItem label="活动类型：" prop="activity_type">
+              <el-select
+                placeholder="请选择活动形式"
+                v-model="form.activity_type">
+                <el-option
+                  v-for="item in activityTypes"
+                  :value="item.value"
+                  :key="item.label"
+                  :label="item.label" />
+              </el-select>
+            </CampFormItem>
+            <CampFormItem label="师生比：">
+              <el-input-number
+                :min="0"
+                placeholder="整数"
+                controls-position="right"
+                style="margin-right: 10px"
+                v-model="form.teacher_student[0]" />
+              <el-input-number
+                placeholder="整数"
+                :min="0"
+                controls-position="right"
+                v-model="form.teacher_student[1]" />
+              <span class="desc"> 活动团队职员总数:活动人数 </span>
+            </CampFormItem>
+            <CampFormItem label="支持语言：" prop="languages" :is-array="true">
+              <el-select
+                style="width: 80%"
+                multiple
+                v-model="form.languages"
+                placeholder="点击选择，可多选">
+                <el-option
+                  v-for="item in languages"
+                  :key="item.label"
+                  :label="item.label"
+                  :value="item.value.name" />
+              </el-select>
+            </CampFormItem>
+          </template>
+        </product-form>
+        <product-form title="活动日程表 " id="3">
+          <template #form>
+            <div class="desc" style="margin-top: 20px">
+              *请在出行地点有所变更的当日，在日程安排最前端以【城市/活动地点】的形式标明，如没有【城市/活动地点】变更可不标明，仅填写具体日程即可。
             </div>
-          </el-form-item>
-        </template>
-      </product-form>
-      <product-form title="商品详情" id="5">
-        <template #form>
-          <el-form-item label="宣传标语：">
-            <el-input
-              placeholder="请选择宣传标语"
-              type="textarea"
-              v-model="form.main_slogon"></el-input>
-            <el-tooltip
-              content="宣传标语是对商品优势卖点的归纳"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="主题描述："
-            ><el-input
-              v-model="form.theme"
-              style="width: 300px"
-              placeholder="请对“商品基本信息-商品详情”做出描述" />
-            <el-tooltip
-              content="主题指您在“商品基本信息-商品主题”中选择的单个或多个类别"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="主题详情：">
-            <el-input
-              type="textarea"
-              v-model="form.theme_details"
-              placeholder="请输入"></el-input>
-          </el-form-item>
-          <el-form-item label="副宣传语："
-            ><el-input
-              v-model="form.sub_slogon"
-              type="textarea"
-              placeholder="请填写副宣传语" />
-            <el-tooltip
-              content="副宣传语是对商品优势卖点的补充"
-              placement="top-start">
-              <el-icon><QuestionFilled /></el-icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="我们的优势：">
-            <div class="boxs">
-              <div v-for="item in form.advantage">
-                <div>卖点</div>
-                <div>
-                  <el-input v-model="item.title" placeholder="请对填写标题" />
+            <CampFormItem label="日程表" prop="daily_schedule" :is-array="true">
+              <div
+                class="scheduls"
+                style="flex-direction: column"
+                v-for="(item, index) in form.daily_schedule">
+                <div style="display: flex">
+                  <campDataPicker
+                    v-model="item.date"
+                    style="margin-right: 20px" />
+                  <el-button
+                    type="success"
+                    @click="addDate"
+                    v-if="index === form.daily_schedule.length - 1"
+                    >添加日期</el-button
+                  >
+                  <el-button @click="() => deleteDate(item)"
+                    >删除日期</el-button
+                  >
                 </div>
-                <div>卖点1详情</div>
-                <div>
-                  <el-input
-                    v-model="item.detail"
-                    type="textarea"
-                    placeholder="请对卖点进行描述" />
+                <div style="background-color: #f2f2f2">
+                  <div class="schdule" v-for="daily in item.content">
+                    <div class="schdule-box">
+                      <el-time-picker
+                        style="width: 20%"
+                        value-format="YYYY-MM-DDTHH:mm"
+                        v-model="daily.start_time" />
+                      <span>-</span>
+                      <el-time-picker
+                        value-format="YYYY-MM-DDTHH:mm"
+                        style="width: 20%"
+                        v-model="daily.end_time" />
+                      <el-input
+                        placeholder="请填写日程安排"
+                        style="width: 50%"
+                        v-model="daily.detail" />
+                      <el-icon
+                        @click="
+                          () =>
+                            (item.content = item.content.filter(
+                              _daily => _daily !== daily
+                            ))
+                        "
+                        ><Delete
+                      /></el-icon>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="add"
+                  @click="() => addDaily(item.content)"
+                  style="margin-top: 10px; cursor: pointer">
+                  添加一行
                 </div>
               </div>
-              <div class="add" @click="addAdvantage">添加卖点</div>
-            </div>
-          </el-form-item>
-          <el-form-item label="收获详情：">
-            <span class="desc"
-              >*请逐条罗列收获详情，须注意将收获内容进行换行输入</span
-            >
-            <el-input
-              v-model="form.gains"
-              style="width: 80%"
-              type="textarea"
-              placeholder="请详细描述收货内容" />
-          </el-form-item>
-          <el-form-item label="教学提纲：">
-            <div class="boxs">
-              <div v-for="item in form.outline">
-                <div>提纲章节</div>
-                <div>
-                  <el-input v-model="item.title" placeholder="请对填写标题" />
-                </div>
-                <div>提纲章节详情</div>
-                <div>
-                  <el-input
-                    v-model="item.detail"
-                    type="textarea"
-                    placeholder="请对卖点进行描述" />
+            </CampFormItem>
+          </template>
+        </product-form>
+        <product-form title="保险信息" id="4">
+          <template #form>
+            <CampFormItem
+              label="组织者责任险："
+              prop="liability_insurance_self_details">
+              <el-cascader
+                style="width: 80%"
+                v-model="form.liability_insurance_self_details"
+                :options="insurenceOptions"
+                placeholder="请选择保险信息" />
+              <el-tooltip
+                content="您选择“购买第三方保险”并提交商品审核的行为，即视为您授权营探将您所录入的商品信息提交至上述保险公司，上述信息将作为核保及日后理赔的依据"
+                placement="top-start">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </CampFormItem>
+            <CampFormItem
+              label="人身意外险："
+              prop="accident_insurance_self_details">
+              <el-cascader
+                style="width: 80%"
+                v-model="form.accident_insurance_self_details"
+                :options="insurenceOptions"
+                clearable
+                placeholder="请选择保险信息" />
+              <el-tooltip
+                content="您选择“购买第三方保险”并提交商品审核的行为，即视为您授权营探将您所录入的商品信息提交至上述保险公司，上述信息将作为核保及日后理赔的依据"
+                placement="top-start">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </CampFormItem>
+            <CampFormItem label="最终核保结果：">
+              <div>
+                <span class="desc">
+                  *核保公司核保完成后,核保结果会自动在此呈现
+                </span>
+                <el-tooltip
+                  content="若有更多被保险人如拼团商品中非通过营探报名的出行人、主办方员工等需一并投保的，请在T-2日（T为活动开始日期）17时前在商品管理-保险投保模块上传其他被保险人的姓名、证件号码、性别、出生年月，平台将在T-2日24时前一次性向保险公司发送被保险人信息。因您自身原因导致上述被保险人信息未能报送成功的，营探不承担责任。"
+                  placement="top-start">
+                  <el-icon><QuestionFilled /></el-icon>
+                </el-tooltip>
+                <div class="tag">
+                  <el-tag class="mx-1" closable type="info"
+                    >待保险公司核保</el-tag
+                  >
                 </div>
               </div>
-              <div class="add" @click="addOutline">添加提纲</div>
-            </div>
-          </el-form-item>
-          <el-form-item label="硬件设施：">
-            <div class="hardware">
-              <header>活动场地</header>
+            </CampFormItem>
+          </template>
+        </product-form>
+        <product-form title="商品详情" id="5">
+          <template #form>
+            <CampFormItem label="宣传标语：" prop="main_slogon">
               <el-input
-                v-model="form.venue"
+                placeholder="请选择宣传标语"
                 type="textarea"
-                placeholder="您可以从以下方面描述室内室外活动场地：
+                v-model="form.main_slogon"></el-input>
+              <el-tooltip
+                content="宣传标语是对商品优势卖点的归纳"
+                placement="top-start">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </CampFormItem>
+            <CampFormItem label="主题描述：" prop="theme"
+              ><el-input
+                v-model="form.theme"
+                style="width: 300px"
+                placeholder="请对“商品基本信息-商品详情”做出描述" />
+              <el-tooltip
+                content="主题指您在“商品基本信息-商品主题”中选择的单个或多个类别"
+                placement="top-start">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </CampFormItem>
+            <CampFormItem label="主题详情：" prop="theme_details">
+              <el-input
+                type="textarea"
+                v-model="form.theme_details"
+                placeholder="请输入"></el-input>
+            </CampFormItem>
+            <CampFormItem label="副宣传语：" prop="sub_slogon"
+              ><el-input
+                v-model="form.sub_slogon"
+                type="textarea"
+                placeholder="请填写副宣传语" />
+              <el-tooltip
+                content="副宣传语是对商品优势卖点的补充"
+                placement="top-start">
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </CampFormItem>
+            <CampFormItem
+              label="我们的优势："
+              prop="advantage"
+              :is-array="true">
+              <div class="boxs">
+                <div v-for="item in form.advantage">
+                  <div>卖点</div>
+                  <div>
+                    <el-input v-model="item.title" placeholder="请对填写标题" />
+                  </div>
+                  <div>卖点1详情</div>
+                  <div>
+                    <el-input
+                      v-model="item.detail"
+                      type="textarea"
+                      placeholder="请对卖点进行描述" />
+                  </div>
+                </div>
+                <div class="add" @click="addAdvantage">添加卖点</div>
+              </div>
+            </CampFormItem>
+            <CampFormItem label="收获详情：" prop="gains">
+              <span class="desc"
+                >*请逐条罗列收获详情，须注意将收获内容进行换行输入</span
+              >
+              <el-input
+                v-model="form.gains"
+                style="width: 80%"
+                type="textarea"
+                placeholder="请详细描述收货内容" />
+            </CampFormItem>
+            <CampFormItem label="教学提纲：" prop="outline" :is-array="true">
+              <div class="boxs">
+                <div v-for="item in form.outline">
+                  <div>提纲章节</div>
+                  <div>
+                    <el-input v-model="item.title" placeholder="请对填写标题" />
+                  </div>
+                  <div>提纲章节详情</div>
+                  <div>
+                    <el-input
+                      v-model="item.detail"
+                      type="textarea"
+                      placeholder="请对卖点进行描述" />
+                  </div>
+                </div>
+                <div class="add" @click="addOutline">添加提纲</div>
+              </div>
+            </CampFormItem>
+            <CampFormItem label="硬件设施：" prop="venue">
+              <div class="hardware">
+                <header>活动场地</header>
+                <el-input
+                  v-model="form.venue"
+                  type="textarea"
+                  placeholder="您可以从以下方面描述室内室外活动场地：
 场地名称；场地类型，如运动场、实验室、专业草场等特色或专业场地；设施设备，如监控、新风系统、活动设施、专业设备等。" />
-            </div>
-            <div class="hardware">
-              <header>住宿条件</header>
-              <el-input
-                type="textarea"
-                v-model="form.accommodations"
-                placeholder="您可以从以下方面描述住宿条件：
+              </div>
+              <div class="hardware">
+                <header>住宿条件</header>
+                <el-input
+                  type="textarea"
+                  v-model="form.accommodations"
+                  placeholder="您可以从以下方面描述住宿条件：
 住宿场所类型，如酒店、民宿、营房、青旅等；
 房间类型，如单人房、双人间、X人宿舍等；
 房间条件，如床型、热水、卫浴、空调、网络、电器等；
 安保情况，包括安保人员、夜间值班、巡逻情况等。" />
-            </div>
-            <div class="hardware">
-              <header>教学教具</header>
-              <el-input
-                v-model="form.teaching_aids"
-                type="textarea"
-                placeholder="您可以从特色教具、定制服装、纪念品、奖章奖状、学员手册等方面进行描述。" />
-            </div>
-          </el-form-item>
-          <el-form-item label="服务团队：">
-            <div v-if="!form.team">
-              本活动工作人员数量：
-              <el-input-number
-                min="0"
-                controls-position="right"
-                v-model="form.teams.team_nums" />
-              <span class="desc"
-                >*请您确保团队成员均有相应从业资质，符合相关法律法规的规定</span
-              >
-            </div>
-            <div class="hardware" v-if="!form.team">
-              <header>团队详情</header>
-              <el-input
-                v-if="!form.team"
-                v-model="form.teams.detail"
-                type="textarea"
-                placeholder="您可以从以下方面进行描述：
-团队配置，如课程老师、助教老师、生活老师、安全员、医护人员、摄影老师、领队、导游等；
-人员详情，如资质、荣誉、教龄等。" />
-              <el-input
-                v-else
-                v-model="form.team"
-                type="textarea"
-                placeholder="您可以从以下方面进行描述：
-团队配置，如课程老师、助教老师、生活老师、安全员、医护人员、摄影老师、领队、导游等；
-人员详情，如资质、荣誉、教龄等。" />
-            </div>
-            <div class="hardware">
-              <header>专业拍摄</header>
-              <span class="desc">
-                *请选择是否有专职拍摄人员，拍摄人员数量，拍摄设备型号；无内容，可留空 </span
-              ><br />
-              <el-select
-                placeholder="请选择是否有专职拍摄人员"
-                v-model="form.record.provide_if">
-                <el-option label="是" :value="true"></el-option>
-                <el-option label="否" :value="false"></el-option>
-              </el-select>
-              <div v-if="form.record.provide_if">
-                <div>
-                  有<el-input-number
-                    style="margin: 20px 0"
-                    min="0"
-                    controls-position="right"
-                    v-model="form.record.team_size" />个拍摄人员
-                </div>
+              </div>
+              <div class="hardware">
+                <header>教学教具</header>
                 <el-input
+                  v-model="form.teaching_aids"
                   type="textarea"
-                  placeholder="请从以下方面描述拍摄服务详情：
+                  placeholder="您可以从特色教具、定制服装、纪念品、奖章奖状、学员手册等方面进行描述。" />
+              </div>
+            </CampFormItem>
+            <CampFormItem label="服务团队：">
+              <div v-if="!form.team">
+                本活动工作人员数量：
+                <el-input-number
+                  min="0"
+                  controls-position="right"
+                  v-model="form.teams.team_nums" />
+                <span class="desc"
+                  >*请您确保团队成员均有相应从业资质，符合相关法律法规的规定</span
+                >
+              </div>
+              <div class="hardware" v-if="!form.team">
+                <header>团队详情</header>
+                <el-input
+                  v-if="!form.team"
+                  v-model="form.teams.detail"
+                  type="textarea"
+                  placeholder="您可以从以下方面进行描述：
+团队配置，如课程老师、助教老师、生活老师、安全员、医护人员、摄影老师、领队、导游等；
+人员详情，如资质、荣誉、教龄等。" />
+                <el-input
+                  v-else
+                  v-model="form.team"
+                  type="textarea"
+                  placeholder="您可以从以下方面进行描述：
+团队配置，如课程老师、助教老师、生活老师、安全员、医护人员、摄影老师、领队、导游等；
+人员详情，如资质、荣誉、教龄等。" />
+              </div>
+              <div class="hardware">
+                <header>专业拍摄</header>
+                <span class="desc">
+                  *请选择是否有专职拍摄人员，拍摄人员数量，拍摄设备型号；无内容，可留空 </span
+                ><br />
+                <el-select
+                  placeholder="请选择是否有专职拍摄人员"
+                  v-model="form.record.provide_if">
+                  <el-option label="是" :value="true"></el-option>
+                  <el-option label="否" :value="false"></el-option>
+                </el-select>
+                <div v-if="form.record.provide_if">
+                  <div>
+                    有<el-input-number
+                      style="margin: 20px 0"
+                      min="0"
+                      controls-position="right"
+                      v-model="form.record.team_size" />个拍摄人员
+                  </div>
+                  <el-input
+                    type="textarea"
+                    placeholder="请从以下方面描述拍摄服务详情：
 预计产出照片张数；预计产出视频个数，单个视频长度；
 使用设备型号；机位个数及位置；其他。"
-                  v-model="form.record.device" />
+                    v-model="form.record.device" />
+                </div>
               </div>
-            </div>
-          </el-form-item>
-          <el-form-item label="餐饮标准：">
-            <el-select
-              placeholder="请选择餐饮提供方式"
-              v-model="form.food.type">
-              <el-option
-                v-for="item of foodOptions"
-                :label="item.label"
-                :value="item.value" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="医疗情况：">
-            <el-input
-              v-model="form.medical_care"
-              type="textarea"
-              placeholder="您可以从以下方面描述医疗情况：
+            </CampFormItem>
+            <CampFormItem label="餐饮标准：" prop="food.type">
+              <el-select
+                placeholder="请选择餐饮提供方式"
+                v-model="form.food.type">
+                <el-option
+                  v-for="item of foodOptions"
+                  :label="item.label"
+                  :value="item.value" />
+              </el-select>
+            </CampFormItem>
+            <CampFormItem label="医疗情况：" prop="medical_care">
+              <el-input
+                v-model="form.medical_care"
+                type="textarea"
+                placeholder="您可以从以下方面描述医疗情况：
 医疗人员情况，如专业医疗人员、员工医疗培训情况等；
 医疗场所情况，如是否有卫生室等；
 医疗物资状况，如急救箱、药品、医疗设备等；
 附近医疗点情况，如附近医院的距离、等级等。" />
-          </el-form-item>
+            </CampFormItem>
 
-          <el-form-item label="图片视频上传">
-            <span class="desc">
-              *您应确保所上传图片视频素材不涉及侵权，所有图片视频为原创或已获得版权方的授权进行使用，涉及人脸露出的商业应用应确保已获得肖像权授权等
-            </span>
-            <div>
+            <CampFormItem label="图片视频上传">
+              <span class="desc">
+                *您应确保所上传图片视频素材不涉及侵权，所有图片视频为原创或已获得版权方的授权进行使用，涉及人脸露出的商业应用应确保已获得肖像权授权等
+              </span>
               <div>
-                短视频
-                <span class="desc">
-                  *请上传一段不超过2分钟，大小10M以内的短视频，内容为行前说明或活动风采展示
-                </span>
+                <div>
+                  短视频
+                  <span class="desc">
+                    *请上传一段不超过2分钟，大小10M以内的短视频，内容为行前说明或活动风采展示
+                  </span>
+                </div>
+                <el-upload
+                  name="image"
+                  :headers="authHeader"
+                  :on-success="
+                    (response, file) => onUploadSuccess(file, 'video_short')
+                  "
+                  :action="userApi.video"
+                  auto-upload
+                  class="avatar-uploader"
+                  :multiple="false"
+                  :show-file-list="false">
+                  <video
+                    v-if="form.video_short"
+                    style="width: 360px"
+                    :src="form.video_short"
+                    controls></video>
+                  <el-icon v-else class="avatar-uploader-icon"
+                    ><Plus
+                  /></el-icon>
+                </el-upload>
               </div>
-              <el-upload
-                name="image"
-                :headers="authHeader"
-                :on-success="
-                  (response, file) => onUploadSuccess(file, 'video_short')
-                "
-                :action="userApi.video"
-                auto-upload
-                class="avatar-uploader"
-                :multiple="false"
-                :show-file-list="false">
-                <video
-                  v-if="form.video_short"
-                  style="width: 360px"
-                  :src="form.video_short"
-                  controls></video>
-                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-              </el-upload>
-            </div>
-            <div>
-              <span> 商品头版图（横版） </span>
-              <span class="desc">
-                *请上传2-5张高质量活动图，横版图片，比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序
-              </span>
-              <el-upload
-                name="image"
-                :headers="authHeader"
-                :action="userApi.video"
-                v-model:file-list="form.horizontal_shows"
-                list-type="picture-card"
-                auto-upload>
-                <el-icon><Plus /></el-icon>
-              </el-upload>
-              <el-dialog v-model="dialogVisible">
-                <img w-full :src="dialogImageUrl" alt="Preview Image" />
-              </el-dialog>
-            </div>
-            <div>
-              <span>竖版风采图（竖版）</span>
-              <span class="desc">
-                *请上传2-5张高质量活动图，横版图片，比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序
-              </span>
-              <campUpload :images="form.vertical_shows" />
-            </div>
-            <div>
-              <span>服务与设施图（横版）</span>
-              <span class="desc">
-                *选题项，请上传2-5张高质量服务与设施图，横版图片，比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序
-              </span>
-              <campUpload :images="form.facility_shows"/>
-            </div>
-          </el-form-item>
-        </template>
-      </product-form>
-      <product-form title="开营须知" id="6">
-        <template #form>
-          <el-form-item label="活动入群：">
-            <el-input
-              disabled
-              style="width: 320px"
-              placeholder="成团后将有专人邀您入群，请尽快完善报名表" />
-          </el-form-item>
-          <el-form-item>
-            <template #label>
-              <span style="line-height: 16px"
-                >行前说明会：<br />
-                <span class="desc">选填</span>
-              </span>
-            </template>
-            <div style="display: flex; margin-bottom: 20px">
-              <campDataPicker
-                style="width: 180px"
-                v-model="form.briefing.daily" />
-              <el-time-picker
-                v-model="form.briefing.start_time"
-                placeholder="开始时间"
-                value-format="YYYY-MM-DDTHH:mm"
-                style="margin: 0 10px; width: 150px" />
-              <el-time-picker
-                placeholder="结束时间"
-                style="width: 150px; margin: 0 10px"
-                value-format="YYYY-MM-DDTHH:mm"
-                v-model="form.briefing.end_time" />
+              <div>
+                <span> 商品头版图（横版） </span>
+                <span class="desc">
+                  *请上传2-5张高质量活动图，横版图片，比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序
+                </span>
+                <el-upload
+                  name="image"
+                  :headers="authHeader"
+                  :action="userApi.video"
+                  v-model:file-list="form.horizontal_shows"
+                  list-type="picture-card"
+                  auto-upload>
+                  <el-icon><Plus /></el-icon>
+                </el-upload>
+                <el-dialog v-model="dialogVisible">
+                  <img w-full :src="dialogImageUrl" alt="Preview Image" />
+                </el-dialog>
+              </div>
+              <div>
+                <span>竖版风采图（竖版）</span>
+                <span class="desc">
+                  *请上传2-5张高质量活动图，横版图片，比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序
+                </span>
+                <campUpload :images="form.vertical_shows" />
+              </div>
+              <div>
+                <span>服务与设施图（横版）</span>
+                <span class="desc">
+                  *选题项，请上传2-5张高质量服务与设施图，横版图片，比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序
+                </span>
+                <campUpload :images="form.facility_shows" />
+              </div>
+            </CampFormItem>
+          </template>
+        </product-form>
+        <product-form title="开营须知" id="6">
+          <template #form>
+            <CampFormItem label="活动入群：">
               <el-input
-                placeholder="请输入参与方式"
-                v-model="form.briefing.type"
-                style="width: auto" />
-            </div>
-            <div class="content">
-              <div>请填写说明会内容</div>
-              <el-input
-                type="textarea"
-                v-model="form.briefing.detail"
-                placeholder="如：1、在线破冰活动
+                disabled
+                style="width: 320px"
+                placeholder="成团后将有专人邀您入群，请尽快完善报名表" />
+            </CampFormItem>
+            <CampFormItem>
+              <template #label>
+                <span style="line-height: 16px"
+                  >行前说明会：<br />
+                  <span class="desc">选填</span>
+                </span>
+              </template>
+              <div style="display: flex; margin-bottom: 20px">
+                <campDataPicker
+                  style="width: 180px"
+                  v-model="form.briefing.daily" />
+                <el-time-picker
+                  v-model="form.briefing.start_time"
+                  placeholder="开始时间"
+                  value-format="YYYY-MM-DDTHH:mm"
+                  style="margin: 0 10px; width: 150px" />
+                <el-time-picker
+                  placeholder="结束时间"
+                  style="width: 150px; margin: 0 10px"
+                  value-format="YYYY-MM-DDTHH:mm"
+                  v-model="form.briefing.end_time" />
+                <el-input
+                  placeholder="请输入参与方式"
+                  v-model="form.briefing.type"
+                  style="width: auto" />
+              </div>
+              <div class="content">
+                <div>请填写说明会内容</div>
+                <el-input
+                  type="textarea"
+                  v-model="form.briefing.detail"
+                  placeholder="如：1、在线破冰活动
       2、在线安全培训
       3、答疑，请出行人及监护人积极参加" />
-            </div>
-          </el-form-item>
-          <el-form-item label="重要说明：">
-            <el-input
-              v-model="form.must_know"
-              type="textarea"
-              placeholder="如：1.未成年人参加独立活动的，在开营当天需由监护人陪同办理相关手续。 
+              </div>
+            </CampFormItem>
+            <CampFormItem label="重要说明：">
+              <el-input
+                v-model="form.must_know"
+                type="textarea"
+                placeholder="如：1.未成年人参加独立活动的，在开营当天需由监护人陪同办理相关手续。 
 2.监护人需携带本人及未成年人身份证原件办理相关手续。
 3.高风险活动注意事项（组织高风险活动时，必须明示的风险事项，及对应的防范措施）：
 示例，本商品包含滑雪这一高风险项目，参与滑雪活动时，出行人应当严格遵守滑雪场的有关安全管理的规定，听从教练和工作人员指挥。" />
-          </el-form-item>
-          <el-form-item label="活动时间地点">
-            <div class="grid">
-              <span>活动集合时间</span>
-              <span></span>
-              <span>活动集合地点</span>
-              <span>详细地址</span>
-              <campDataPicker
-                style="width: 160px"
-                v-model="form.activity_time_location.start_date" />
-              <el-time-picker
-                value-format="YYYY-MM-DDTHH:mm"
-                v-model="form.activity_time_location.start_time"
-                style="width: 160px"
-                placeholder="开始时间" />
-              <campPlace
-                v-model:place="form.activity_time_location.start_location"
-                :initial-place="form.activity_time_location.start_location" />
+            </CampFormItem>
+            <CampFormItem
+              label="活动时间地点"
+              prop="activity_time_location.start_date">
+              <div class="grid">
+                <span>活动集合时间</span>
+                <span></span>
+                <span>活动集合地点</span>
+                <span>详细地址</span>
+                <campDataPicker
+                  style="width: 160px"
+                  v-model="form.activity_time_location.start_date" />
+                <el-time-picker
+                  value-format="YYYY-MM-DDTHH:mm"
+                  v-model="form.activity_time_location.start_time"
+                  style="width: 160px"
+                  placeholder="开始时间" />
+                <campPlace
+                  v-model:place="form.activity_time_location.start_location"
+                  :initial-place="form.activity_time_location.start_location" />
+                <el-input
+                  placeholder="请输入详细地址"
+                  v-model="
+                    form.activity_time_location.start_location_detailed
+                  " />
+              </div>
+              <div class="grid">
+                <span>活动结束时间</span>
+                <span></span>
+                <span>活动结束地点</span>
+                <span>详细地址</span>
+                <campDataPicker
+                  style="width: 160px"
+                  v-model="form.activity_time_location.end_date" />
+                <el-time-picker
+                  value-format="YYYY-MM-DDTHH:mm"
+                  v-model="form.activity_time_location.end_time"
+                  style="width: 160px"
+                  placeholder="开始时间" />
+                <campPlace
+                  v-model:place="form.activity_time_location.end_location"
+                  :initial-place="form.activity_time_location.end_location" />
+                <el-input
+                  placeholder="请输入详细地址"
+                  v-model="form.activity_time_location.end_location_detailed" />
+              </div>
+            </CampFormItem>
+            <CampFormItem label="报道着装要求">
+              <el-select
+                placeholder="请选择是否有着装要求"
+                v-model="form.clothing.unified">
+                <el-option :value="true" label="有着装要求"> </el-option>
+                <el-option :value="false" label="无着装要求"> </el-option>
+              </el-select>
+              <div style="width: 100%" />
               <el-input
-                placeholder="请输入详细地址"
-                v-model="form.activity_time_location.start_location_detailed" />
-            </div>
-            <div class="grid">
-              <span>活动结束时间</span>
-              <span></span>
-              <span>活动结束地点</span>
-              <span>详细地址</span>
-              <campDataPicker
-                style="width: 160px"
-                v-model="form.activity_time_location.end_date" />
-              <el-time-picker
-                value-format="YYYY-MM-DDTHH:mm"
-                v-model="form.activity_time_location.end_time"
-                style="width: 160px"
-                placeholder="开始时间" />
-              <campPlace
-                v-model:place="form.activity_time_location.end_location"
-                :initial-place="form.activity_time_location.end_location" />
+                type="textarea"
+                placeholder="请填写具体的着装要求"
+                v-if="form.clothing.unified"
+                v-model="form.clothing.detail" />
+            </CampFormItem>
+            <CampFormItem label="整理物资准备" prop="preparation">
               <el-input
-                placeholder="请输入详细地址"
-                v-model="form.activity_time_location.end_location_detailed" />
-            </div>
-          </el-form-item>
-          <el-form-item label="报道着装要求">
-            <el-select
-              placeholder="请选择是否有着装要求"
-              v-model="form.clothing.unified">
-              <el-option :value="true" label="有着装要求"> </el-option>
-              <el-option :value="false" label="无着装要求"> </el-option>
-            </el-select>
-            <div style="width: 100%" />
-            <el-input
-              type="textarea"
-              placeholder="请填写具体的着装要求"
-              v-if="form.clothing.unified"
-              v-model="form.clothing.detail" />
-          </el-form-item>
-          <el-form-item label="整理物资准备">
-            <el-input
-              v-model="form.preparation"
-              type="textarea"
-              placeholder="1.家长可以提前准备一封关怀、鼓励孩子的信。
+                v-model="form.preparation"
+                type="textarea"
+                placeholder="1.家长可以提前准备一封关怀、鼓励孩子的信。
 2.有特长的同学携带设备参加活动,须提前沟通。">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="团队紧急联系人方式">
-            <span class="desc">*请填写主理人团队紧急联系方式</span>
-            <div style="width: 100%"></div>
-            <el-input
-              placeholder="姓名"
-              v-model="form.emergency_contacts[0].name"></el-input>
-            <el-input
-              placeholder="团队职务"
-              style="margin: 10px"
-              v-model="form.emergency_contacts[0].title"></el-input>
-            <el-input
-              placeholder="请输入电话号码"
-              v-model="form.emergency_contacts[0].phone"></el-input>
-            <el-input
-              style="width: 300px"
-              placeholder="有时间要求或者其他限制，请补充在此"
-              v-model="form.emergency_contacts[0].detail"></el-input>
-          </el-form-item>
-        </template>
-      </product-form>
-      <product-form title="购买须知" id="7">
-        <template #form>
-          <el-form-item label="价格说明">
-            <div style="display: flex; flex-direction: column">
-              <div>
-                <div>本商品为含税价，包含</div>
-                <el-input
-                  v-model="form.price_include"
-                  type="textarea"
-                  placeholder="包括出行人在活动期间的食宿费用、活动项目体验费、课程师资费、场地费、教具物资费等" />
-              </div>
-              <div>
-                <div>本价格未包含的费用，包括但不限于</div>
-                <el-input
-                  v-model="form.price_exclude"
-                  type="textarea"
-                  placeholder="未包含费用中应当包括：1.其他个人消费（必须填写）；2.收费提供的服务项目，须说明服务内容及其价格；3.活动过程中其他可选择的自费项目及其价格，如：洗漱用具、各地和集散地之间往返的交通费、门票费用、SPA馆体验费、干洗费、住宿升级费用等。" />
-              </div>
+              </el-input>
+            </CampFormItem>
+            <CampFormItem
+              label="团队紧急联系人方式"
+              prop="emergency_contacts[0].name">
+              <span class="desc">*请填写主理人团队紧急联系方式</span>
+              <div style="width: 100%"></div>
+              <el-input
+                placeholder="姓名"
+                v-model="form.emergency_contacts[0].name"></el-input>
+              <el-input
+                placeholder="团队职务"
+                style="margin: 10px"
+                v-model="form.emergency_contacts[0].title"></el-input>
+              <el-input
+                placeholder="请输入电话号码"
+                v-model="form.emergency_contacts[0].phone"></el-input>
+              <el-input
+                style="width: 300px"
+                placeholder="有时间要求或者其他限制，请补充在此"
+                v-model="form.emergency_contacts[0].detail"></el-input>
+            </CampFormItem>
+          </template>
+        </product-form>
+        <product-form title="购买须知" id="7">
+          <template #form>
+            <CampFormItem label="价格说明">
+              <div style="display: flex; flex-direction: column">
+                <div>
+                  <div>本商品为含税价，包含</div>
+                  <el-input
+                    v-model="form.price_include"
+                    type="textarea"
+                    placeholder="包括出行人在活动期间的食宿费用、活动项目体验费、课程师资费、场地费、教具物资费等" />
+                </div>
+                <div>
+                  <div>本价格未包含的费用，包括但不限于</div>
+                  <el-input
+                    v-model="form.price_exclude"
+                    type="textarea"
+                    placeholder="未包含费用中应当包括：1.其他个人消费（必须填写）；2.收费提供的服务项目，须说明服务内容及其价格；3.活动过程中其他可选择的自费项目及其价格，如：洗漱用具、各地和集散地之间往返的交通费、门票费用、SPA馆体验费、干洗费、住宿升级费用等。" />
+                </div>
 
-              <div>
-                <div>产品包含的保险情况说明</div>
-                <el-input
-                  v-model="form.price_insurance_detail"
-                  type="textarea"
-                  placeholder="应当填写人身意外伤害险的投保情况，组织者责任险情况无须填写。填写样例如下：已为您投保由天安财险承保的人身意外保险保额10万元/人，保障范围为个人意外10万元，其中5万元高风险运动保障，另外救援服务2万元，个人财产遗失1万元，公共交通 (不含自驾)2万元，意外伤害10万元，具体保障范围可根据保险名称查询保险保单条款。" />
+                <div>
+                  <div>产品包含的保险情况说明</div>
+                  <el-input
+                    v-model="form.price_insurance_detail"
+                    type="textarea"
+                    placeholder="应当填写人身意外伤害险的投保情况，组织者责任险情况无须填写。填写样例如下：已为您投保由天安财险承保的人身意外保险保额10万元/人，保障范围为个人意外10万元，其中5万元高风险运动保障，另外救援服务2万元，个人财产遗失1万元，公共交通 (不含自驾)2万元，意外伤害10万元，具体保障范围可根据保险名称查询保险保单条款。" />
+                </div>
+                <div>
+                  <div>特殊条件退订机制</div>
+                  <el-input
+                    disabled
+                    type="textarea"
+                    placeholder="超出无损退订期后，因下述几项特定情形导致无法按时履约的，用户可在商品和服务活动开始日期前联系营探客服，提交“特殊原因退订”申请；符合特殊原因退订要求的，营探将按照下述约定向用户提供退款服务，不再适用“有条件退”的具体方案，详情请见《预定退费须知》" />
+                </div>
               </div>
-              <div>
-                <div>特殊条件退订机制</div>
-                <el-input
-                  disabled
-                  type="textarea"
-                  placeholder="超出无损退订期后，因下述几项特定情形导致无法按时履约的，用户可在商品和服务活动开始日期前联系营探客服，提交“特殊原因退订”申请；符合特殊原因退订要求的，营探将按照下述约定向用户提供退款服务，不再适用“有条件退”的具体方案，详情请见《预定退费须知》" />
-              </div>
-            </div>
-          </el-form-item>
-          <el-form-item label="特别提醒">
-            <el-input
-              disabled
-              type="textarea"
-              placeholder="1.出行人可能不适合参的活动情形:
+            </CampFormItem>
+            <CampFormItem label="特别提醒">
+              <el-input
+                disabled
+                type="textarea"
+                placeholder="1.出行人可能不适合参的活动情形:
 例:活动中包含碰碰车项目，10岁以下的儿童不宜参与 (如仍选择报名参加但只参与部分活动，原则上非门票类费用不予退款)
 2.活动日程将根据交通、政策、天气等原因调整顺序,如因顺序调整导致部分日程无法履行的,我们将及时与您联系.
 3.活动提纲、师生比、团队人员配置，可能会根据实际情况进行小幅调整
 4.若出行人出现单数的情况,我们会根据报名时间安排最后报名的出行人与同性别工作人员同住
 5.本次出行的照片可能会发布在自媒体平台上，如果您认为此举可能会给您造成心理上的不愉悦，请提前告知主办方，否则视为默认许可。" />
-          </el-form-item>
-        </template>
-      </product-form>
+            </CampFormItem>
+          </template>
+        </product-form>
+      </el-form>
     </main>
     <camp-footer>
       <!-- 创建商品 -->
@@ -807,15 +824,15 @@
     </camp-footer>
     <nav class="product-nav">
       <ul>
-        <li><a href="#1">商品基本信息</a></li>
-        <li><a href="#2">课程详情</a></li>
-        <li><a href="#3">活动日程表</a></li>
-        <li><a href="#4">保险信息</a></li>
-        <li><a href="#5">商品详情</a></li>
+        <li><a>商品基本信息</a></li>
+        <li><a>课程详情</a></li>
+        <li><a>活动日程表</a></li>
+        <li><a>保险信息</a></li>
+        <li><a>商品详情</a></li>
         <li>
-          <a href="#6">开营须知 </a>
+          <a>开营须知 </a>
         </li>
-        <li><a href="#7">购买须知</a></li>
+        <li><a>购买须知</a></li>
       </ul>
     </nav>
   </div>
@@ -833,9 +850,15 @@ import campUpload from '../../../../component/camp-upload.vue'
 import campPlace from '../../../../component/camp-place.vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import CampFormItem from '../../../../component/camp-form-item.vue'
 const radio1 = ref(true)
+const formRef = ref()
 const store = useStore()
 const router = useRouter()
+const validateForm = () =>
+  formRef.value?.validate().catch(() => {
+    document.querySelector('.is-error').scrollIntoView()
+  })
 const isLiabilitySelf = computed(
   () =>
     form.value.liability_insurance_self_details === insurenceOptions[0].value
@@ -884,7 +907,7 @@ const form = ref({
     }
   ],
   gains: '',
-  refundpolicy_id: 0,
+  refundpolicy_id: 1,
   outline: [
     {
       title: '',
@@ -959,10 +982,6 @@ const form = ref({
   price_insurance_detail: '',
   product_general_features: ''
 })
-const rules = Reflect.ownKeys(form.value).forEach(key => {})
-const getRule = (key = '') => [
-  { required: true, message: 'Please input Activity name', trigger: 'blur' }
-]
 
 const onUploadSuccess = (file, key) => {
   form.value[key] = URL.createObjectURL(file.raw)
@@ -993,26 +1012,28 @@ const upShalve = () => {
     })
 }
 const createProduct = () => {
-  
-  return
-  request
-    .post(userApi.product, {
-      content: form.value,
-      create_reason: '创建商品',
-      user: { id: store.user.id },
-      version: '1.0.0',
-      work_line_id: 1400,
-      work_operation: 4200
-    })
-    .then(r => {
-      if (r.data.Code == '200') {
-        ElMessage({
-          type: 'success',
-          message: r.data.msg || '提交成功'
+  validateForm().then(r => {
+    if (r) {
+      request
+        .post(userApi.product, {
+          content: form.value,
+          create_reason: '创建商品',
+          user: { id: store.user.id },
+          version: '1.0.0',
+          work_line_id: 1400,
+          work_operation: 4200
         })
-        router.push('/workbench/productLunch')
-      }
-    })
+        .then(r => {
+          if (r.data.Code == '200') {
+            ElMessage({
+              type: 'success',
+              message: r.data.msg || '提交成功'
+            })
+            router.push('/workbench/productLunch')
+          }
+        })
+    }
+  })
 }
 const saveDraft = () => {
   request
@@ -1481,6 +1502,11 @@ const foodOptions = [
 </script>
 <style lang="scss">
 .product-detail {
+  div.is-required {
+    ::before {
+      display: none;
+    }
+  }
   .scheduls {
     margin-bottom: 30px;
   }

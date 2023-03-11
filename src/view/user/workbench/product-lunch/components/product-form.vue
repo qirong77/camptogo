@@ -1,7 +1,9 @@
 <template>
   <div class="product-form">
     <header :id="id">{{ title }}</header>
-    <el-form> <slot name="form"></slot> </el-form>
+    <div class="form">
+      <slot name="form"></slot>
+    </div>
   </div>
 </template>
 
@@ -10,8 +12,8 @@ defineProps({
   title: {
     default: '标题'
   },
-  id:{
-    default:''
+  id: {
+    default: ''
   }
 })
 </script>
@@ -39,7 +41,6 @@ defineProps({
   }
   .el-form-item {
     margin: 40px 0;
-
   }
   .el-input-number {
     width: 88px;
