@@ -1,6 +1,6 @@
 <template>
   <div class="product-form">
-    <header>{{ title }}</header>
+    <header :id="id">{{ title }}</header>
     <el-form> <slot name="form"></slot> </el-form>
   </div>
 </template>
@@ -9,6 +9,9 @@
 defineProps({
   title: {
     default: '标题'
+  },
+  id:{
+    default:''
   }
 })
 </script>

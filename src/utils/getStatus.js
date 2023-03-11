@@ -12,7 +12,7 @@ export function showStatusStr(statusCode) {
       return '待提交上架' //审核通过
 
     case 5310:
-      return '已提交上架待审核' //  提交审核后
+      return '审核中' //  提交审核后
 
     case 5400:
       return '已上架' // 已上架

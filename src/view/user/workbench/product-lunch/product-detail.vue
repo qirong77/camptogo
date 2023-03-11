@@ -1,7 +1,7 @@
 <template>
   <div class="product-detail">
     <main>
-      <product-form title="商品基本信息">
+      <product-form title="商品基本信息" id="1">
         <template #form>
           <el-form-item label="商品名称：">
             <el-input
@@ -32,6 +32,7 @@
               <el-radio :label="true"
                 >设置低于
                 <el-input-number
+                  min="0"
                   :disabled="!radio1"
                   v-model="form.group_limit_size"
                   controls-position="right" />
@@ -64,6 +65,7 @@
             label="划线价格：
           ">
             <el-input-number
+              min="0"
               style="width: 100px"
               v-model="form.price_original"
               controls-position="right" />
@@ -73,6 +75,7 @@
             label="未划线价格：
           ">
             <el-input-number
+              min="0"
               style="width: 100px"
               v-model="form.price_selling"
               controls-position="right" />
@@ -139,10 +142,11 @@
           </el-form-item>
         </template>
       </product-form>
-      <product-form title="课程详情">
+      <product-form title="课程详情" id="2">
         <template #form>
           <el-form-item label="活动人数：">
             <el-input-number
+              min="0"
               v-model="form.size_valid"
               controls-position="right"
               placeholder="整数" />&nbsp;人
@@ -150,10 +154,12 @@
           </el-form-item>
           <el-form-item label="报名年龄：">
             <el-input-number
+              min="0"
               v-model="form.age_min"
               controls-position="right"
               placeholder="整数" />&nbsp;岁至&nbsp;
             <el-input-number
+              min="0"
               v-model="form.age_max"
               controls-position="right"
               placeholder="整数" />
@@ -202,12 +208,14 @@
           </el-form-item>
           <el-form-item label="师生比：">
             <el-input-number
+              min="0"
               placeholder="整数"
               controls-position="right"
               style="margin-right: 10px"
               v-model="form.teacher_student[0]" />
             <el-input-number
               placeholder="整数"
+              min="0"
               controls-position="right"
               v-model="form.teacher_student[1]" />
             <span class="desc"> 活动团队职员总数:活动人数 </span>
@@ -227,7 +235,7 @@
           </el-form-item>
         </template>
       </product-form>
-      <product-form title="活动日程表 ">
+      <product-form title="活动日程表 " id="3">
         <template #form>
           <div class="desc" style="margin-top: 20px">
             *请在出行地点有所变更的当日，在日程安排最前端以【城市/活动地点】的形式标明，如没有【城市/活动地点】变更可不标明，仅填写具体日程即可。
@@ -249,43 +257,45 @@
                 >
                 <el-button @click="() => deleteDate(item)">删除日期</el-button>
               </div>
-              <div class="schdule" v-for="daily in item.content">
-                <div class="schdule-box">
-                  <el-time-picker
-                    style="width: 20%"
-                    value-format="YYYY-MM-DDTHH:mm"
-                    v-model="daily.start_time" />
-                  <span>-</span>
-                  <el-time-picker
-                    value-format="YYYY-MM-DDTHH:mm"
-                    style="width: 20%"
-                    v-model="daily.end_time" />
-                  <el-input
-                    placeholder="请填写日程安排"
-                    style="width: 50%"
-                    v-model="daily.detail" />
-                  <el-icon
-                    @click="
-                      () =>
-                        (item.detail = item.detail.filter(
-                          _daily => _daily !== daily
-                        ))
-                    "
-                    ><Delete
-                  /></el-icon>
+              <div style="background-color: #f2f2f2;">
+                <div class="schdule" v-for="daily in item.content">
+                  <div class="schdule-box">
+                    <el-time-picker
+                      style="width: 20%"
+                      value-format="YYYY-MM-DDTHH:mm"
+                      v-model="daily.start_time" />
+                    <span>-</span>
+                    <el-time-picker
+                      value-format="YYYY-MM-DDTHH:mm"
+                      style="width: 20%"
+                      v-model="daily.end_time" />
+                    <el-input
+                      placeholder="请填写日程安排"
+                      style="width: 50%"
+                      v-model="daily.detail" />
+                    <el-icon
+                      @click="
+                        () =>
+                          (item.content = item.content.filter(
+                            _daily => _daily !== daily
+                          ))
+                      "
+                      ><Delete
+                    /></el-icon>
+                  </div>
                 </div>
-                <div
-                  class="add"
-                  @click="() => addDaily(item.content)"
-                  style="margin-top: 10px; cursor: pointer">
-                  添加一行
-                </div>
+              </div>
+              <div
+                class="add"
+                @click="() => addDaily(item.content)"
+                style="margin-top: 10px; cursor: pointer">
+                添加一行
               </div>
             </div>
           </el-form-item>
         </template>
       </product-form>
-      <product-form title="保险信息">
+      <product-form title="保险信息" id="4">
         <template #form>
           <el-form-item label="组织者责任险：">
             <el-cascader
@@ -331,7 +341,7 @@
           </el-form-item>
         </template>
       </product-form>
-      <product-form title="商品详情">
+      <product-form title="商品详情" id="5">
         <template #form>
           <el-form-item label="宣传标语：">
             <el-input
@@ -450,6 +460,7 @@
             <div v-if="!form.team">
               本活动工作人员数量：
               <el-input-number
+                min="0"
                 controls-position="right"
                 v-model="form.teams.team_nums" />
               <span class="desc"
@@ -488,6 +499,7 @@
                 <div>
                   有<el-input-number
                     style="margin: 20px 0"
+                    min="0"
                     controls-position="right"
                     v-model="form.record.team_size" />个拍摄人员
                 </div>
@@ -545,7 +557,7 @@
                 :show-file-list="false">
                 <video
                   v-if="form.video_short"
-                  style="width: 360px; height: 200px"
+                  style="width: 360px"
                   :src="form.video_short"
                   controls></video>
                 <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
@@ -574,42 +586,19 @@
               <span class="desc">
                 *请上传2-5张高质量活动图，横版图片，比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序
               </span>
-              <el-upload
-                name="image"
-                :headers="authHeader"
-                :action="userApi.video"
-                v-model:file-list="form.vertical_shows"
-                list-type="picture-card"
-                auto-upload>
-                <el-icon><Plus /></el-icon>
-              </el-upload>
-
-              <el-dialog v-model="dialogVisible">
-                <img w-full :src="dialogImageUrl" alt="Preview Image" />
-              </el-dialog>
+              <campUpload :images="form.vertical_shows" />
             </div>
             <div>
               <span>服务与设施图（横版）</span>
               <span class="desc">
                 *选题项，请上传2-5张高质量服务与设施图，横版图片，比例为3:2，支持jpg/png格式，单张图片小于2M，可拖动图片排序
               </span>
-              <el-upload
-                name="image"
-                :headers="authHeader"
-                :action="userApi.video"
-                v-model:file-list="form.facility_shows"
-                list-type="picture-card"
-                auto-upload>
-                <el-icon><Plus /></el-icon>
-              </el-upload>
-              <el-dialog v-model="dialogVisible">
-                <img w-full :src="dialogImageUrl" alt="Preview Image" />
-              </el-dialog>
+              <campUpload :images="form.facility_shows"/>
             </div>
           </el-form-item>
         </template>
       </product-form>
-      <product-form title="开营须知">
+      <product-form title="开营须知" id="6">
         <template #form>
           <el-form-item label="活动入群：">
             <el-input
@@ -628,7 +617,6 @@
               <campDataPicker
                 style="width: 180px"
                 v-model="form.briefing.daily" />
-
               <el-time-picker
                 v-model="form.briefing.start_time"
                 placeholder="开始时间"
@@ -712,7 +700,10 @@
               <el-option :value="true" label="有着装要求"> </el-option>
               <el-option :value="false" label="无着装要求"> </el-option>
             </el-select>
+            <div style="width: 100%" />
             <el-input
+              type="textarea"
+              placeholder="请填写具体的着装要求"
               v-if="form.clothing.unified"
               v-model="form.clothing.detail" />
           </el-form-item>
@@ -744,7 +735,7 @@
           </el-form-item>
         </template>
       </product-form>
-      <product-form title="购买须知">
+      <product-form title="购买须知" id="7">
         <template #form>
           <el-form-item label="价格说明">
             <div style="display: flex; flex-direction: column">
@@ -795,14 +786,14 @@
     </main>
     <camp-footer>
       <!-- 创建商品 -->
-      <template v-if="isNewProdoct">
+      <template v-if="isNewProdoct || isDraft">
         <el-button type="success" @click="createProduct">提交审核</el-button>
         <el-button type="success" disabled>查看预览</el-button>
         <el-button type="success" @click="saveDraft">保存草稿</el-button>
       </template>
       <!-- 提交审核后 -->
       <template v-if="isCheck">
-        <el-button type="success" disabled>复制商品</el-button>
+        <el-button type="success" @click="createProduct">复制商品</el-button>
         <el-button type="success" disabled>查看预览</el-button>
         <el-button type="success" disabled>提交审核</el-button>
       </template>
@@ -811,9 +802,22 @@
         <el-button type="success" @click="createProduct">提交修改</el-button>
         <el-button type="success" @click="upShalve">点击上架</el-button>
         <el-button type="success" disabled>查看预览</el-button>
-        <el-button type="success" disabled="">复制商品</el-button>
+        <el-button type="success" @click="createProduct">复制商品</el-button>
       </template>
     </camp-footer>
+    <nav class="product-nav">
+      <ul>
+        <li><a href="#1">商品基本信息</a></li>
+        <li><a href="#2">课程详情</a></li>
+        <li><a href="#3">活动日程表</a></li>
+        <li><a href="#4">保险信息</a></li>
+        <li><a href="#5">商品详情</a></li>
+        <li>
+          <a href="#6">开营须知 </a>
+        </li>
+        <li><a href="#7">购买须知</a></li>
+      </ul>
+    </nav>
   </div>
 </template>
 <script setup>
@@ -955,6 +959,10 @@ const form = ref({
   price_insurance_detail: '',
   product_general_features: ''
 })
+const rules = Reflect.ownKeys(form.value).forEach(key => {})
+const getRule = (key = '') => [
+  { required: true, message: 'Please input Activity name', trigger: 'blur' }
+]
 
 const onUploadSuccess = (file, key) => {
   form.value[key] = URL.createObjectURL(file.raw)
@@ -1027,6 +1035,7 @@ const saveDraft = () => {
 
 // 新创建的
 const isNewProdoct = ref(false)
+const isDraft = computed(() => '5100'.includes(store.product.status))
 // 提交审核后
 const isCheck = computed(() => '5200 5310'.includes(store.product.status))
 // 审核通过后
@@ -1039,7 +1048,7 @@ const addAdvantage = () => {
   })
 }
 const addOutline = () => {
-  forform.value.outline.push({
+  form.value.outline.push({
     title: '',
     detail: ''
   })
@@ -1063,7 +1072,15 @@ const addDate = () => {
     ]
   })
 }
+
 const deleteDate = item => {
+  if (form.value.daily_schedule.length === 1) {
+    ElMessage({
+      message: '至少保存一个日期',
+      type: 'error'
+    })
+    return
+  }
   form.value.daily_schedule = form.value.daily_schedule.filter(
     schedule => schedule !== item
   )
@@ -1109,51 +1126,47 @@ const certifiedFeatures = [
   },
   {
     label: '国际奖项',
-    value: '国际奖项'
+    value: 1
   },
   {
     label: '国家奖项',
-    value: '国家奖项'
+    value: 2
   },
   {
     label: '省市奖项高级职称',
-    value: '省市奖项高级职称'
+    value: 3
   },
   {
     label: '中级职称',
-    value: '中级职称'
+    value: 5
   },
   {
     label: '荣誉称号',
-    value: '荣誉称号'
+    value: 6
   },
   {
     label: '医护保障',
-    value: '医护保障'
+    value: 24
   },
   {
     label: '专家认证',
-    value: '专家认证'
+    value: 14
   },
   {
     label: '自营场地',
-    value: '自营场地'
+    value: 16
   },
   {
     label: '优质场地',
-    value: '优质场地'
+    value: 25
   },
   {
     label: '国际品牌',
-    value: '国际品牌'
-  },
-  {
-    label: '国有品牌',
-    value: '国有品牌'
+    value: 17
   },
   {
     label: '自研课程',
-    value: '自研课程'
+    value: 20
   }
 ]
 // 退改方案
@@ -1430,12 +1443,20 @@ const insurenceOptions = [
         value: '天安·组织者责任险·每人赔偿限额10万档'
       },
       {
+        label: '天安·组织者责任险·每人赔偿限额15万档',
+        value: '天安·组织者责任险·每人赔偿限额15万档'
+      },
+      {
         label: '天安·组织者责任险·每人赔偿限额20万档',
         value: '天安·组织者责任险·每人赔偿限额20万档'
       },
       {
         label: '天安·组织者责任险·每人赔偿限额30万档',
         value: '天安·组织者责任险·每人赔偿限额30万档'
+      },
+      {
+        label: '天安·组织者责任险·每人赔偿限额50万档',
+        value: '天安·组织者责任险·每人赔偿限额50万档'
       }
     ]
   }
@@ -1458,6 +1479,22 @@ const foodOptions = [
 </script>
 <style lang="scss">
 .product-detail {
+  .scheduls {
+    margin-bottom: 30px;
+  }
+  .product-nav {
+    position: absolute;
+    right: 60px;
+    top: 80px;
+    li {
+      list-style: none;
+      margin: 10px;
+      a {
+        text-decoration: none;
+        color: gray;
+      }
+    }
+  }
   .product-form {
     width: 910px;
   }
@@ -1492,7 +1529,7 @@ const foodOptions = [
     align-items: center;
     flex-direction: column;
     padding: 10px;
-    margin: 10px 0;
+    margin-top: 10px;
     background: #f2f2f2;
   }
   .add {
