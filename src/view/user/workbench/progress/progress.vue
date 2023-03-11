@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted } from "vue";
 import { request } from "../../../../api";
 import { useStore } from "../../../../store";
 //备注：
@@ -114,8 +114,6 @@ const handleCurrentChange = (val) => {
     align-items: center;
     z-index: 99;
     box-shadow: -1px -3px 5px 2px rgb(0 0 0 / 4%);
-    .foot-block-pagination {
-    }
   }
 }
 .title {
