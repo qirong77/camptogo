@@ -83,7 +83,7 @@
 
             <CampFormItem label="退改方案：" prop="refundpolicy_id">
               <el-cascader
-              class="back"
+                class="back"
                 style="width: 250px"
                 placeholder="请选择退改方案"
                 v-model="form.refundpolicy_id"
@@ -1037,24 +1037,28 @@ const createProduct = () => {
   })
 }
 const saveDraft = () => {
-  request
-    .post(userApi.product, {
-      content: form.value,
-      create_reason: '保存草稿',
-      user: { id: store.user.id },
-      version: '1.0.0',
-      work_line_id: 1400,
-      work_operation: 4300
-    })
-    .then(r => {
-      if (r.data.Code == '200') {
-        ElMessage({
-          type: 'success',
-          message: r.data.msg || '提交成功'
+  validateForm().then(r => {
+    if (r) {
+      request
+        .post(userApi.product, {
+          content: form.value,
+          create_reason: '保存草稿',
+          user: { id: store.user.id },
+          version: '1.0.0',
+          work_line_id: 1400,
+          work_operation: 4300
         })
-        router.push('/workbench/productLunch')
-      }
-    })
+        .then(r => {
+          if (r.data.Code == '200') {
+            ElMessage({
+              type: 'success',
+              message: r.data.msg || '提交成功'
+            })
+            router.push('/workbench/productLunch')
+          }
+        })
+    }
+  })
 }
 
 // 新创建的
