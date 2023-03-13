@@ -25,10 +25,10 @@ const navs = [
     label: "商品发布",
     navTo: "/workbench/productLunch",
   },
-  // {
-  //   label: "商品管理",
-  //   navTo: "/workbench/product-manage",
-  // },
+  {
+    label: "商品管理",
+    navTo: "/workbench/product-manage",
+  },
   {
     label: "审核进度",
     navTo: "/workbench/progress",

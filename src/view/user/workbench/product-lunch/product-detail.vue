@@ -1013,7 +1013,7 @@ const upShalve = () => {
 }
 const createProduct = () => {
   validateForm().then(r => {
-    if (r) {
+    if (r || !r) {
       request
         .post(userApi.product, {
           content: form.value,
