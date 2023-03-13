@@ -83,6 +83,7 @@
 
             <CampFormItem label="退改方案：" prop="refundpolicy_id">
               <el-cascader
+              class="back"
                 style="width: 250px"
                 placeholder="请选择退改方案"
                 v-model="form.refundpolicy_id"
@@ -1013,7 +1014,7 @@ const upShalve = () => {
 }
 const createProduct = () => {
   validateForm().then(r => {
-    if (r || !r) {
+    if (r) {
       request
         .post(userApi.product, {
           content: form.value,
@@ -1208,7 +1209,7 @@ const backOptions = [
     children: [
       {
         label:
-          '有条件退一：行程开始前4-6日取消合同，按订单费用总额的50%支付违约金；行程开始前1-3日取消合同，按订单费用总额的70%支付违约金；行程开始当天取消合同，按订单费用总额的100%支付违约金。',
+          '有条件退一：行程开始前4-6日取消合同，按订单费用总额的50%支付违约金；\n行程开始前1-3日取消合同，按订单费用总额的70%支付违约金；行程开始当天取消合同，按订单费用总额的100%支付违约金。',
         value: 3
       },
       {
@@ -1505,6 +1506,11 @@ const foodOptions = [
   div.is-required {
     ::before {
       display: none;
+    }
+  }
+  .back {
+    li {
+      height: 80px;
     }
   }
   .scheduls {
