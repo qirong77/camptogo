@@ -3,11 +3,8 @@
     :label="label"
     :prop="prop"
     :rules="{
-      trigger:{
-        
-      },
-
-      message: '该选择为必填项',
+      trigger:'blur',
+      message:msg,
       required: true
     }">
     <template #label>
@@ -27,6 +24,9 @@ defineProps({
   },
   isArray: {
     default: false
+  },
+  msg:{
+    default:'该选择为必填项',
   }
 })
 </script>

@@ -8,7 +8,7 @@
             <div style="font-weight: bold; margin-right: 20px">账户信息</div>
           </div>
           <div class="bBody">
-            <el-form-item label="注册手机：">
+            <el-form-item label="绑定账户：">
               <el-input
                 disabled
                 v-model="store.user.provider.mobile"></el-input>
@@ -40,14 +40,24 @@
               <el-select
                 placeholder="请选择认证证件类型"
                 v-model="info.identify_type">
-                <template v-if="info.applicant_type == 3">
-                  <el-option label="居民身份证" :value="1"></el-option>
-                  <el-option label="护照" :value="2"></el-option>
-                </template>
-                <el-option v-else label="营业执照" :value="3"></el-option>
+                <el-option
+                  label="居民身份证"
+                  :value="1"
+                  :disabled="!isPeson"></el-option>
+                <el-option
+                  label="护照"
+                  :value="2"
+                  :disabled="!isPeson"></el-option>
+                <el-option
+                  label="营业执照"
+                  :value="3"
+                  :disabled="isPeson"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="营业执照：">
+            <el-form-item label="营业执照：" v-show="!isPeson">
+              <span style="color: gray">
+                请上传加盖公章的彩色扫描件，确保内容清晰完整，个体工商户须加捺指印（支持jpg/png格式，小于2M）。
+              </span>
               <CampUpload :images="info.business_license" />
             </el-form-item>
             <el-form-item label="认证名称：">
@@ -62,19 +72,19 @@
                 placeholder="与认证证件上的号码保持一致"
                 style="width: 300px"></el-input>
             </el-form-item>
-            <el-form-item label="成立日期：">
+            <el-form-item label="成立日期：" v-show="isPeson">
               <el-date-picker
                 value-format="YYYY-MM-DDTHH:mm"
                 v-model="info.date_started"
                 type="date"
                 placeholder="年/月/日" />
             </el-form-item>
-            <el-form-item label="经营住所：">
+            <el-form-item label="经营住所：" v-show="isPeson">
               <CampPlace
                 v-model="info.provider_registration_area"
                 :initial-place="info.provider_registration_area" />
             </el-form-item>
-            <el-form-item label="法定代表人：">
+            <el-form-item label="法定代表人：" v-show="isPeson">
               <el-input
                 placeholder="姓名"
                 v-model="info.representative_name"></el-input>
@@ -100,6 +110,12 @@
                 <div></div>
               </div>
               <CampUpload :images="info.identify_license" />
+            </el-form-item>
+            <el-form-item label="行政许可证明">
+              <div style="color: gray">
+                若您的经营范围属于根据法律规定需要办理行政许可的特殊行业，须提交相应经营许可证明。如有其他行政许可证明，请提供清晰完整的彩色图片，支持jpg/png格式，小于2M。
+              </div>
+              <CampUpload images="xx" />
             </el-form-item>
           </div>
         </el-card>
@@ -197,7 +213,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useStore } from '../../../../store'
 import { identifyTypes, peopleSize } from './common/options'
 import { request } from '../../../../api'
@@ -207,7 +223,7 @@ import campFooter from '../../../../component/camp-footer.vue'
 import CampPlace from '../../../../component/camp-place.vue'
 
 const store = useStore()
-
+const isPeson = computed(() => info.value.applicant_type == 4)
 let info = ref({
   provider: 51,
   date_created: '2022-08-30T15:42:07Z',
@@ -241,19 +257,18 @@ let info = ref({
   admin_license: null,
   applicant_letter: null
 })
-watch(
-  () => info.applicant_type,
-  () => {
-    console.log('11')
-    info.value.identify_type = ''
-  }
-)
 const submit = () => {
   request.post(userApi.basicInfoSubmit, {
     provider_id: store.user.provider.id || 0,
     ...info
   })
 }
+watch(
+  () => info.value.applicant_type,
+  () => {
+    info.value.identify_type = ''
+  }
+)
 const isUser = ref(true)
 onMounted(() => {
   request

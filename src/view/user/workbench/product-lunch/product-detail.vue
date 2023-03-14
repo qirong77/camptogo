@@ -68,7 +68,7 @@
               <el-input-number
                 :min="0"
                 style="width: 100px"
-                v-model="form.price_original"
+                v-model.number="form.price_original"
                 controls-position="right" />
               <span class="desc">*原价（单位：元）</span>
             </CampFormItem>
@@ -390,8 +390,7 @@
             </CampFormItem>
             <CampFormItem
               label="我们的优势："
-              prop="advantage"
-              :is-array="true">
+              prop="advantage[0].detail">
               <div class="boxs">
                 <div v-for="item in form.advantage">
                   <div>卖点</div>
@@ -419,7 +418,7 @@
                 type="textarea"
                 placeholder="请详细描述收货内容" />
             </CampFormItem>
-            <CampFormItem label="教学提纲：" prop="outline" :is-array="true">
+            <CampFormItem label="教学提纲：" prop="outline[0].detail" :is-array="true">
               <div class="boxs">
                 <div v-for="item in form.outline">
                   <div>提纲章节</div>
@@ -542,7 +541,10 @@
 附近医疗点情况，如附近医院的距离、等级等。" />
             </CampFormItem>
 
-            <CampFormItem label="图片视频上传">
+            <CampFormItem
+              label="图片视频上传"
+              prop="horizontal_shows"
+              :msg="'图片和视频为必选项'">
               <span class="desc">
                 *您应确保所上传图片视频素材不涉及侵权，所有图片视频为原创或已获得版权方的授权进行使用，涉及人脸露出的商业应用应确保已获得肖像权授权等
               </span>
@@ -653,7 +655,7 @@
       3、答疑，请出行人及监护人积极参加" />
               </div>
             </CampFormItem>
-            <CampFormItem label="重要说明：">
+            <CampFormItem label="重要说明：" prop="must_know">
               <el-input
                 v-model="form.must_know"
                 type="textarea"
