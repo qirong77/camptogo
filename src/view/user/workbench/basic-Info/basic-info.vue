@@ -3,29 +3,47 @@
     <div class="title">基本信息</div>
     <div>
       <el-form>
-        <el-card class="block">
-          <div class="settingMoudle" style="display: flex; align-items: center">
-            <div style="font-weight: bold; margin-right: 20px">账户信息</div>
-          </div>
-          <div class="bBody">
-            <el-form-item label="绑定账户：">
-              <el-input
-                disabled
-                v-model="store.user.provider.mobile"></el-input>
-            </el-form-item>
-            <el-form-item label="绑定邮箱：">
-              <span>{{ store.user.provider.email || '无' }}</span>
-              <span class="grayLabel">
-                *该邮箱为系统默认邮箱之后用于收平台通知，请及时查看邮件
-              </span>
-            </el-form-item>
-            <el-form-item label="认证状态：">
-              <span v-if="store.user.provider.date_created">已认证 </span>
-              <span v-else>未认证</span>
-              <span class="grayLabel">如需更改认证信息，请联系客服</span>
-            </el-form-item>
-          </div>
-        </el-card>
+        <el-card shadow="always" class="block">
+            <div class="title">账户信息</div>
+            <div class="main-message">
+              <div class="bind_account">
+                <div style="margin-right: 50px">绑定账户：</div>
+                <div class="bind_account_message">
+                  <div class="conent">
+                    <span style="margin-right: 42px">绑定手机：</span
+                    ><span style="margin-right: 15px">{{ phone }}</span>
+                    <el-icon><View @click="replace" /></el-icon>
+                    <span class="alarm"
+                      >*该手机为系统默认手机号之后用于收平台通知，请注意查看短信</span
+                    >
+                  </div>
+                  <div class="conent">
+                    <span style="margin-right: 70px">姓名：</span> <span>{{ Name }}</span>
+                  </div>
+                  <div class="conentf">
+                    <span
+                      >身份证号：<span style="margin-left: 42px">{{ idCard }}</span></span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="bind_email">
+                <span style="margin-right: 50px; font-weight: 600">绑定邮箱：</span>
+
+                <span style="color: #999">2318988902@camptogoLogo.com</span>
+                <span class="alarm"
+                  >*该邮箱为系统默认邮箱之后用于收平台通知，请及时查看邮件</span
+                >
+              </div>
+              <div class="certified_statu">
+                <span style="margin-right: 50px; font-weight: 600">认证状态：</span>
+                <el-icon><SuccessFilled color="#93D900" /></el-icon>
+                <span style="margin-left: 10px; color: #999">已认证</span>
+                <span style="color: #999">（2022/5/22）</span>
+                <span class="alarm"> *如需要更改认证信息，请联系客服</span>
+              </div>
+            </div>
+          </el-card>
         <el-card class="block">
           <div class="settingMoudle" style="display: flex; align-items: center">
             <div style="font-weight: bold; margin-right: 20px">认证详情</div>
@@ -222,6 +240,11 @@ import CampUpload from '../../../../component/camp-upload.vue'
 import campFooter from '../../../../component/camp-footer.vue'
 import CampPlace from '../../../../component/camp-place.vue'
 
+
+const phone = ref(158800003555);
+const Name = ref("黄嗷嗷");
+const idCard = ref(380481244212070584);
+const replace = () => { };
 const store = useStore()
 const isPeson = computed(() => info.value.applicant_type == 4)
 let info = ref({
@@ -340,6 +363,49 @@ onMounted(() => {
   :deep(.el-checkbox__inner) {
     border-radius: 50% !important;
     overflow: hidden;
+  }
+}
+.alarm {
+  color: #999;
+  font-size: 14px;
+  margin-left: 20px;
+}
+.title {
+  font-size: 18px;
+  margin-top: 0px;
+  color: #242424;
+  font-weight: 800;
+  margin-bottom: 25px;
+}
+.main-message {
+  margin-left: 34px;
+  columns: #2c2c2c;
+  font-size: 15px;
+  font-weight: 600;
+  .bind_account {
+    margin-bottom: 40px;
+    margin-top: 20px;
+    display: flex;
+    margin-right: 20px;
+    .bind_account_message {
+      display: flex;
+      flex-direction: column;
+      font-weight: 400;
+      .conent {
+        margin-bottom: 30px;
+      }
+      .conentf {
+        margin-bottom: 0px;
+      }
+    }
+  }
+  .bind_email {
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  .certified_statu {
+    margin-bottom: 10px;
+    font-weight: 400;
   }
 }
 </style>
