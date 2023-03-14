@@ -6,11 +6,25 @@
           style="cursor: pointer"
           @click="router.push('/')"
           class="logo"
-          src="../../assets/camptogoLogo.png" />
-        <camp-nav :nav-options="navOptions" style="margin-left: 600px" />
-        <!-- <div class="user">
-          <span>用户名</span>
-        </div> -->
+          src="../../assets/camptogoLogo.png"
+        />
+        <!-- <campNavTopVue :nav-options="topNavOptions" style="margin-left: 0px" /> -->
+        <div class="topNav">
+          <el-tabs v-model="navactiveName" class="nav_top" @tab-click="handleClick">
+            <el-tab-pane label="工作台" name="first"></el-tab-pane>
+            <el-tab-pane label="资管系统" name="second"></el-tab-pane>
+            <el-tab-pane label="规则协议" name="third"></el-tab-pane>
+            <el-tab-pane label="公告通知" name="fourth"></el-tab-pane>
+          </el-tabs>
+        </div>
+        <div class="user">
+          <el-image
+            style="width: 45px; height: 45px; border-radius: 50%; margin-right: 10px"
+            src="https://ts1.cn.mm.bing.net/th/id/R-C.878c5cc711a4e395e24f48e097257023?rik=bYVWhvBngfjSgQ&riu=http%3a%2f%2fimg3.redocn.com%2f20120514%2fRedocn_2012051406170220.jpg&ehk=2V8GqplTkMTfpp1wu%2bQFy7HDeZRIC5GjSYMqqjTpE94%3d&risl=&pid=ImgRaw&r=0"
+            fit="fill"
+          />
+          <div>用户名</div>
+        </div>
       </el-header>
       <el-container>
         <el-aside :width="sideWidth + 'px'">
@@ -27,38 +41,47 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import CampNav from '../../component/camp-nav.vue'
+import { first } from "lodash";
+import { useRouter } from "vue-router";
+
 defineProps({
   sideWidth: {
-    default: 200
-  }
-})
-const router = useRouter()
-const navOptions = [
-  {
-    label: '工作台',
-    navTo: '/workbench/basicInfo'
+    default: 200,
   },
-  // {
-  //   label: "资管系统",
-  //   navTo: "/workbench/basicInfo",
-  // },
-  {
-    label: '规则协议',
-    navTo: '/rule'
-  }
-  // {
-  //   navTo: "/workbench/basicInfo",
-  //   label: "公告通知",
-  // },
-]
+});
+const router = useRouter();
+// const topNavOptions = [
+//   {
+//     label: "工作台",
+//     navTo: "/workbench/basicInfo",
+//   },
+//   {
+//     label: "资管系统",
+//     navTo: "/workbench/basicInfo",
+//   },
+//   {
+//     label: "规则协议",
+//     navTo: "/rule",
+//   },
+//   {
+//     navTo: "/notice",
+//     label: "公告通知",
+//   },
+// ];
+
+// const navactiveName = ref("first");
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .user-layout {
   width: 100vw;
   height: 100vh;
+  display: flex;
+  .user {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .el-header {
     height: 80px;
     display: flex;
@@ -79,11 +102,38 @@ const navOptions = [
     overflow: scroll;
   }
   .el-container {
-    max-height:  calc(100vh - 60px);
+    max-height: calc(100vh - 60px);
   }
   .el-aside {
     position: relative;
     box-shadow: 4px 3px 9px 0px rgb(0 0 0 / 4%);
+  }
+  .nav_top {
+    font-size: 18px;
+  }
+  .demo-tabs > .el-tabs__content {
+    padding: 32px;
+    color: #005eff;
+    font-size: 32px;
+    font-weight: 600;
+  }
+}
+.topNav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: relative;
+  top: 5px;
+  font-size: 26px;
+  left: 430px;
+  .nav_top {
+    font-size: 26px;
+  }
+  .el-aside {
+    background-color: #d3dce6;
+    color: #333;
+    text-align: center;
+    line-height: 20px;
   }
 }
 </style>
