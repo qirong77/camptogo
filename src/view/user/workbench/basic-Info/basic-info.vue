@@ -3,45 +3,66 @@
     <div class="title">基本信息</div>
     <div>
       <el-form>
-        <el-card class="block">
-          <div class="settingMoudle" style="display: flex; align-items: center">
-            <div style="font-weight: bold; margin-right: 20px">账户信息</div>
-          </div>
-          <div class="bBody">
-            <el-form-item label="注册手机：">
-              <el-input disabled v-model="store.user.mobile"></el-input>
-            </el-form-item>
-            <el-form-item label="注册邮箱：">
-              <span>{{ store.user.email || '无' }}</span>
-              <span class="grayLabel">
-                *该邮箱为系统默认邮箱之后用于收平台通知，请及时查看邮件
-              </span>
-            </el-form-item>
-            <el-form-item label="认证状态：">
-              <!-- <span v-if="store.user?.provider.id">已认证</span>
-              <span v-else>未认证</span> -->
-            </el-form-item>
+        <el-card shadow="always" class="block">
+          <div class="title">账户信息</div>
+          <div class="main-message">
+            <div class="bind_account">
+              <div style="margin-right: 50px">绑定账户：</div>
+              <div class="bind_account_message">
+                <div class="conent">
+                  <span style="margin-right: 42px">绑定手机：</span
+                  ><span style="margin-right: 15px">{{ phone }}</span>
+                  <el-icon><View @click="replace" /></el-icon>
+                  <span class="alarm"
+                    >*该手机为系统默认手机号之后用于收平台通知，请注意查看短信</span
+                  >
+                </div>
+                <div class="conent">
+                  <span style="margin-right: 70px">姓名：</span> <span>{{ Name }}</span>
+                </div>
+                <div class="conentf">
+                  <span
+                    >身份证号：<span style="margin-left: 42px">{{ idCard }}</span></span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="bind_email">
+              <span style="margin-right: 50px; font-weight: 600">绑定邮箱：</span>
+
+              <span style="color: #999">2318988902@camptogoLogo.com</span>
+              <span class="alarm"
+                >*该邮箱为系统默认邮箱之后用于收平台通知，请及时查看邮件</span
+              >
+            </div>
+            <div class="certified_statu">
+              <span style="margin-right: 50px; font-weight: 600">认证状态：</span>
+              <el-icon><SuccessFilled color="#93D900" /></el-icon>
+              <span style="margin-left: 10px; color: #999">已认证</span>
+              <span style="color: #999">（2022/5/22）</span>
+              <span class="alarm"> *如需要更改认证信息，请联系客服</span>
+            </div>
           </div>
         </el-card>
+
         <el-card class="block">
           <div class="settingMoudle" style="display: flex; align-items: center">
             <div style="font-weight: bold; margin-right: 20px">认证详情</div>
           </div>
           <div class="bBody">
-            <el-form-item label="认证类型：" v-model="info.applicant_type">
+            <el-form-item label="认证类型：">
               <el-cascader
                 placeholder="请选择认证类型"
                 v-model="info.applicant_type"
-                :options="identifyTypes">
+                :options="identifyTypes"
+              >
               </el-cascader>
-              <el-select
-                placeholder="请选择认证证件类型"
-                v-model="info.identify_type">
-                <template v-if="info.applicant_type == '3-0'">
-                  <el-option label="居民身份证" value="1"></el-option>
-                  <el-option label="护照" value="2"></el-option>
+              <el-select placeholder="请选择认证证件类型" v-model="info.identify_type">
+                <template v-if="info.applicant_type == 3">
+                  <el-option label="居民身份证" :value="1"></el-option>
+                  <el-option label="护照" :value="2"></el-option>
                 </template>
-                <el-option v-else label="营业执照" value="3"></el-option>
+                <el-option v-else label="营业执照" :value="3"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="营业执照：">
@@ -51,41 +72,47 @@
               <el-input
                 v-model="info.applicant_name"
                 placeholder="与认证证件上的名称保持一致"
-                style="width: 350px"></el-input>
+                style="width: 350px"
+              ></el-input>
             </el-form-item>
             <el-form-item label="认证号码：">
               <el-input
                 v-model="info.identify_number"
                 placeholder="与认证证件上的号码保持一致"
-                style="width: 300px"></el-input>
+                style="width: 300px"
+              ></el-input>
             </el-form-item>
             <el-form-item label="成立日期：">
               <el-date-picker
                 value-format="YYYY-MM-DDTHH:mm"
                 v-model="info.date_started"
                 type="date"
-                placeholder="年/月/日" />
+                placeholder="年/月/日"
+              />
             </el-form-item>
             <el-form-item label="经营住所：">
-              <el-cascader
-                placeholder="请选择国家/地区"
+              <CampPlace
                 v-model="info.provider_registration_area"
-                :options="regionData" />
-              <el-input
-                placeholder="请输入详细地址"
-                style="width: 300px"
-                v-model="info.registration_detail_location"></el-input>
+                :initial-place="info.provider_registration_area"
+              />
             </el-form-item>
             <el-form-item label="法定代表人：">
-              <el-input placeholder="姓名"></el-input>
-              <el-input placeholder="请输入电话号码"></el-input>
-              <el-input placeholder="请输入身份证号"></el-input>
+              <el-input placeholder="姓名" v-model="info.representative_name"></el-input>
+              <el-input
+                placeholder="请输入电话号码"
+                v-model="info.representative_phone"
+              ></el-input>
+              <el-input
+                placeholder="请输入身份证号"
+                v-model="info.representative_realid"
+              ></el-input>
             </el-form-item>
             <el-form-item label="身份证件：">
               <div style="display: block; width: 90%">
                 <span
                   class="grayLabel"
-                  style="margin-left: 0; display: block; width: 100%">
+                  style="margin-left: 0; display: block; width: 100%"
+                >
                   <div style="white-space: normal">
                     1.若您属于法人或非法人组织，请上传法定代表人或主要负责人（如个人独资企业投资者、合伙企业执行事务合伙人等）的有效身份证复印件，身份证正、反面复印在同一张A4纸上，加盖公章，法定代表人或主要负责人亲笔签名（支持jpg/png格式，小于2M）。
                   </div>
@@ -108,29 +135,32 @@
               <el-input
                 style="width: 300px"
                 v-model="info.tax_payer_bank_name"
-                placeholder="需填写至支行网点全称"></el-input>
+                placeholder="需填写至支行网点全称"
+              ></el-input>
             </el-form-item>
             <el-form-item label="银行账号：">
               <el-input
                 v-model="info.tax_payer_bank_account"
-                placeholder="输入账号请勿空格"></el-input>
+                placeholder="输入账号请勿空格"
+              ></el-input>
             </el-form-item>
             <el-form-item label="通讯地址：">
-              <el-cascader
-                style="width: 300px"
-                v-model="info.tax_payer_address"
-                placeholder="请选择地点"
-                :options="regionData" />
+              <CampPlace
+                v-model:place="info.tax_payer_address"
+                :initial-place="info.tax_payer_address"
+              />
               <el-input
                 v-model="info.registration_detail_location"
                 style="width: 300px"
-                placeholder="请输入详细pro地址"></el-input>
+                placeholder="请输入详细地址"
+              ></el-input>
             </el-form-item>
             <el-form-item label="电话号码：">
               <el-input
                 style="width: 300px"
                 v-model="info.tax_payer_mobile"
-                placeholder="区号和单位电话连续填写"></el-input>
+                placeholder="区号和单位电话连续填写"
+              ></el-input>
             </el-form-item>
           </div>
         </el-card>
@@ -140,9 +170,7 @@
           </div>
           <div class="bBody">
             <el-form-item label="认证申请函：">
-              <span
-                class="grayLabel"
-                style="margin-left: 0; display: block; width: 100%">
+              <span class="grayLabel" style="margin-left: 0; display: block; width: 100%">
                 <div style="white-space: normal">
                   1.若您属于个人或个体工商户，请下载个人、个体工商户《申请认证公函》模板，填写、打印并签字、捺指印后上传彩色图片（支持jpg/png格式，小于2M）。
                 </div>
@@ -163,123 +191,117 @@
               <el-input
                 style="width: 300px"
                 v-model="info.brand_website"
-                placeholder="请输入官网首页网址(若没有请填写“无”)"></el-input>
+                placeholder="请输入官网首页网址(若没有请填写“无”)"
+              ></el-input>
             </el-form-item>
             <el-form-item label="业务介绍：">
               <el-input
                 v-model="info.introduction"
                 type="textarea"
-                placeholder="限200字,公司介绍内容应包括:主营业务的品类、特色、主要经营的地区、服务的受众群体年龄、荣誉奖项等" />
+                placeholder="限200字,公司介绍内容应包括:主营业务的品类、特色、主要经营的地区、服务的受众群体年龄、荣誉奖项等"
+              />
             </el-form-item>
             <el-form-item label="人员规模：">
-              <el-select
-                v-model="info.employee_number"
-                placeholder="请输入人员规模">
-                <el-option
-                  v-for="p in peopleSize"
-                  :value="p"
-                  :label="p"
-                  :key="p" />
+              <el-select v-model="info.employee_number" placeholder="请输入人员规模">
+                <el-option v-for="p in peopleSize" :value="p" :label="p" :key="p" />
               </el-select>
             </el-form-item>
           </div>
         </el-card>
       </el-form>
     </div>
-    <footer>
-      <el-button type="success" :disabled="!isUser">提交审核</el-button>
-    </footer>
+    <campFooter>
+      <el-button type="success" :disabled="!isUser" @click="submit">提交审核</el-button>
+    </campFooter>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, reactive } from 'vue'
-import { regionData } from 'element-china-area-data'
-import { useStore } from '../../../../store'
-import { identifyTypes, peopleSize } from './common/options'
-import { request } from '../../../../api'
-import { userApi } from '../../../../api/modules/user/user.js'
-import CampUpload from '../../../../component/camp-upload.vue'
-const store = useStore()
-let info = reactive({
+import { onMounted, ref, watch } from "vue";
+import { useStore } from "../../../../store";
+import { identifyTypes, peopleSize } from "./common/options";
+import { request } from "../../../../api";
+import { userApi } from "../../../../api/modules/user/user.js";
+import CampUpload from "../../../../component/camp-upload.vue";
+import campFooter from "../../../../component/camp-footer.vue";
+import CampPlace from "../../../../component/camp-place.vue";
+
+const store = useStore();
+const phone = ref(158800003555);
+const Name = ref("黄嗷嗷");
+const idCard = ref(380481244212070584);
+const replace = () => {};
+let info = ref({
   provider: 51,
-  date_created: '2022-08-30T15:42:07Z',
+  date_created: "2022-08-30T15:42:07Z",
+  representative_name: "",
+  representative_phone: "",
+  representative_realid: "",
   applicant_type: 1,
-  identify_type: 1,
-  identify_number: '91110106335526776T',
-  applicant_name: '北京天籁知音国际咨询有限公司',
-  provider_registration_area: '中国_北京_通州_',
-  registration_detail_location: '北京市通州区砖厂北里142号楼7层5718',
-  legal_representative: '罗蕴佳',
-  business_duration_start: '2015-03-31T00:00:00.000Z',
-  business_duration_end: '2055-03-30T00:00:00.000Z',
-  tax_payer_bank_name: '中国银行股份有限公司北京劲松东口支行',
-  tax_payer_bank_no: '104100006046',
-  tax_payer_bank_account: '319464000450',
-  tax_payer_address: '北京市东城区东花市大街花市枣苑11号楼811室',
-  tax_payer_mobile: '18811060049',
-  authorizer_name: '王晶',
-  authorizer_title: '校长',
-  authorizer_realid: '130102197803190637',
-  brand_name: '天籁知艺',
-  brand_website: 'www.bj-tlzy.com',
-  introduction: 'yyy',
+  identify_type: "",
+  identify_number: "91110106335526776T",
+  applicant_name: "北京天籁知音国际咨询有限公司",
+  provider_registration_area: "中国_北京_通州_",
+  registration_detail_location: "北京市通州区砖厂北里142号楼7层5718",
+  legal_representative: "罗蕴佳",
+  business_duration_start: "2015-03-31T00:00:00.000Z",
+  business_duration_end: "2055-03-30T00:00:00.000Z",
+  tax_payer_bank_name: "中国银行股份有限公司北京劲松东口支行",
+  tax_payer_bank_no: "104100006046",
+  tax_payer_bank_account: "319464000450",
+  tax_payer_address: "北京市东城区东花市大街花市枣苑11号楼811室",
+  tax_payer_mobile: "18811060049",
+  authorizer_name: "王晶",
+  authorizer_title: "校长",
+  authorizer_realid: "130102197803190637",
+  brand_name: "天籁知艺",
+  brand_website: "www.bj-tlzy.com",
+  introduction: "yyy",
   employee_number: 50,
   business_license: null,
   date_started: null,
   identify_license: null,
   admin_license: null,
-  applicant_letter: null
-})
+  applicant_letter: null,
+});
+watch(
+  () => info.applicant_type,
+  () => {
+    console.log("11");
+    info.value.identify_type = "";
+  }
+);
 const submit = () => {
   request.post(userApi.basicInfoSubmit, {
-    provider_id: store.user.provider?.id || 0,
-    ...info
-  })
-}
-const isUser = ref(true)
+    provider_id: store.user.provider.id || 0,
+    ...info,
+  });
+};
+const isUser = ref(true);
 onMounted(() => {
   request
     .post(userApi.getBasiInfo, {
-      provider_id: store.providerId || 55
+      provider_id: store.providerId || 55,
     })
-    .then(res => {
-      console.log('用户基础信息的数据\n', res.data)
+    .then((res) => {
+      console.log("用户基础信息的数据\n", res.data);
       if (res.data.Code == 200) {
-        isUser.value = false
-        // info = reactive(res.data)
+        isUser.value = false;
+        info.value = res.data.details;
       }
-    })
-})
+    });
+});
 </script>
 
 <style lang="scss">
 .basic-info {
-  .el-form-item__label {
-    min-width: 100px;
-  }
   .el-input {
     width: auto;
     margin-right: 10px;
   }
-  footer {
-    position: fixed;
-    background-color: white;
-    width: 100%;
-    height: 80px;
-    bottom: 0;
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    z-index: 99;
-    box-shadow: -1px -3px 5px 2px rgb(0 0 0 / 4%);
-    .el-button {
-      margin: 0 20px;
-    }
-  }
 }
 .title {
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 600;
   margin-bottom: 16px;
@@ -313,7 +335,7 @@ onMounted(() => {
   }
 
   .grayLabel {
-    font-family: 'PingFang SC';
+    font-family: "PingFang SC";
     font-style: normal;
     margin-left: 10px;
     font-size: 12px;
@@ -326,6 +348,51 @@ onMounted(() => {
   :deep(.el-checkbox__inner) {
     border-radius: 50% !important;
     overflow: hidden;
+  }
+}
+
+// 账户信息
+.alarm {
+  color: #999;
+  font-size: 14px;
+  margin-left: 20px;
+}
+.title {
+  font-size: 18px;
+  margin-top: 0px;
+  color: #242424;
+  font-weight: 800;
+  margin-bottom: 25px;
+}
+.main-message {
+  margin-left: 34px;
+  columns: #2c2c2c;
+  font-size: 15px;
+  font-weight: 600;
+  .bind_account {
+    margin-bottom: 40px;
+    margin-top: 20px;
+    display: flex;
+    margin-right: 20px;
+    .bind_account_message {
+      display: flex;
+      flex-direction: column;
+      font-weight: 400;
+      .conent {
+        margin-bottom: 30px;
+      }
+      .conentf {
+        margin-bottom: 0px;
+      }
+    }
+  }
+  .bind_email {
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  .certified_statu {
+    margin-bottom: 10px;
+    font-weight: 400;
   }
 }
 </style>
